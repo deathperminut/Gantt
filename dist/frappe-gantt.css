@@ -1,0 +1,444 @@
+.gantt .grid-background {
+    fill: none;
+}
+
+.gantt .grid-header {
+    fill: #ffffff;
+    stroke: #e0e0e0;
+    stroke-width: 1.4;
+}
+
+.gantt .grid-row {
+    fill: #ffffff;
+}
+
+.gantt .grid-row:nth-child(even) {
+    fill: #ffffff;
+}
+
+.gantt .row-line {
+    stroke: #ebeff2;
+    stroke-width: 0.1;
+}
+
+.gantt .tick {
+    stroke: #e0e0e0;
+    stroke-width: 0.3;
+}
+
+.gantt .tick.thick {
+    /* stroke-width: 20;
+    stroke: #333; */
+}
+
+
+/*DEFINIMOS EL GRADIENTE*/
+
+#header-shape-gradient {
+    --color-stop: #f12c06;
+    --color-bot: #faed34;
+}
+
+.gantt .today-highlight {
+    fill: #6149CD;
+    opacity: 0.16;
+}
+
+.gantt .today-header {
+    fill: #6149CD;
+    opacity: 1;
+}
+
+.gantt .today-header-circle {
+    fill: #F9B035;
+    opacity: 1;
+}
+
+.gantt .arrow {
+    fill: none;
+    opacity: 1;
+    stroke: #6149CD;
+    stroke-width: 1.5;
+}
+
+.gantt .bar {
+    stroke: #8D99A6;
+    stroke-width: 0;
+    transition: stroke-width 0.3s ease;
+    user-select: none;
+    -webkit-filter: drop-shadow( 10px 4px 4px rgba(200, 159, 216, 0.3));
+    filter: drop-shadow( 2px 10px 4px rgba(200, 159, 216, 0.399));
+}
+
+.gantt .bar.father {
+    fill: #6149CD;
+    /* transition: 0.5s; */
+}
+
+.gantt .bar.son {
+    fill: #F6EFFF;
+    /* transition: 0.5s; */
+}
+
+.gantt .CircleInput.father {
+    fill: #000;
+    opacity: 0;
+}
+
+.gantt .CircleInput.son {
+    fill: #000;
+    opacity: 0;
+}
+
+.gantt .CircleOutput.father {
+    fill: #000;
+    opacity: 0;
+}
+
+.gantt .CircleOutput.son {
+    fill: #000;
+    opacity: 0;
+}
+
+.inputName {
+    width: 250px;
+    height: 14px;
+    background-color: transparent;
+    border: 0;
+    color: rgb(187, 184, 184)
+}
+
+.delete {
+    opacity: 0;
+}
+
+.extend {
+    opacity: 0 !important;
+}
+
+
+/*ELIMINAMOS LOS ESTILOS POR DEFECTO AL HACER CLICK...*/
+
+.inputName:focus {
+    outline: none !important;
+    outline-width: 0 !important;
+    box-shadow: none;
+}
+
+.InputLabel {
+    opacity: 1;
+}
+
+.InputLabel.big {
+    opacity: 0;
+}
+
+.inputName::placeholder {
+    color: rgb(187, 184, 184)
+}
+
+.gantt .Line.father {
+    stroke-width: 0.5;
+    stroke: #442d9d;
+    opacity: 0;
+}
+
+.gantt .Line.son {
+    stroke-width: 0.5;
+    stroke: #442d9d;
+    opacity: 0;
+}
+
+.gantt .bar-progress {
+    fill: #7A86A1;
+    opacity: 0;
+}
+
+.gantt .bar-invalid {
+    fill: transparent;
+    stroke: #8D99A6;
+    stroke-width: 1;
+    stroke-dasharray: 5;
+}
+
+.gantt .bar-invalid~.bar-label {
+    fill: #555;
+    ;
+}
+
+.gantt .bar-label.dateImage {
+    visibility: visible;
+}
+
+
+/*   IMPORTAMOS FUENTES   */
+
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@200&display=swap');
+
+/*      ESTILOS ESTANDAR        */
+
+.gantt .bar-label {
+    fill: #e9e6e6;
+    /* dominant-baseline: central; */
+    text-anchor: start;
+    font-size: 10px;
+    font-weight: lighter;
+    font-family: Manrope;
+    alignment-baseline: start;
+}
+
+.gantt .bar-label.name {
+    fill: #e9e6e6;
+    visibility: visible;
+    font-size: 13px;
+    /* transition: 0.2s; */
+}
+
+.gantt .bar-label.InfoImage {
+    visibility: visible;
+    /* transition: 0.2s; */
+}
+
+.gantt .bar-label.nameSon {
+    fill: black;
+    font-size: 13px;
+    visibility: visible;
+    /* transition: 0.2s; */
+}
+
+.gantt .bar-label.date {
+    fill: #e9e6e6;
+    visibility: visible;
+    /* transition: 0.2s; */
+}
+
+.gantt .bar-label.PorcentText {
+    fill: #e9e6e6;
+    visibility: hidden;
+}
+
+.gantt .bar-label.PorcentValue {
+    fill: #e9e6e6;
+    visibility: hidden;
+}
+
+.gantt .bar-label.WorksValue {
+    fill: #e9e6e6;
+    visibility: hidden;
+}
+
+.gantt .bar-label.dateSon {
+    fill: black;
+    visibility: visible;
+    /* transition: 0.2s; */
+}
+
+.gantt .bar-label.BigCase {
+    visibility: hidden;
+    font-size: 20px;
+    /*INICIALMENTE OCULTO Y SIN OCUPAR ESPACIO EN HTML*/
+}
+
+.gantt .bar-label.BigCaseSon {
+    visibility: hidden;
+    font-size: 20px;
+    fill: black;
+    /*INICIALMENTE OCULTO Y SIN OCUPAR ESPACIO EN HTML*/
+}
+
+.gantt .bar-label.PorcentBox {
+    visibility: hidden;
+    fill: #C0BDCC;
+    stroke: #6149CD;
+    stroke-width: 1px;
+}
+
+.gantt .bar-label.WorksText {
+    fill: #e9e6e6;
+    visibility: hidden;
+}
+
+.gantt .bar-label.WorksBox {
+    visibility: hidden;
+    fill: #C0BDCC;
+    stroke: #6149CD;
+    stroke-width: 1px;
+}
+
+.gantt .bar-label.TaskButtonBox {
+    fill: white;
+    stroke: #6149CD;
+    stroke-width: 1px;
+    visibility: hidden;
+}
+
+.gantt .bar-label.TaskButton {
+    visibility: visible;
+}
+
+
+/*******************************/
+
+
+/*DEFINIMOS LOS ESTILOS PARA EL CASO EN QUE SE ENCOJA*/
+
+.gantt .bar-label.TaskButtonBox.big {
+    visibility: hidden;
+}
+
+.gantt .bar-label.TaskButton.big {
+    visibility: hidden;
+}
+
+.gantt .bar-label.PorcentText.big {
+    visibility: hidden;
+}
+
+.gantt .bar-label.PorcentText.big {
+    visibility: hidden;
+}
+
+.gantt .bar-label.PorcentValue.big {
+    visibility: hidden;
+}
+
+.gantt .bar-label.PorcentBox.big {
+    visibility: hidden;
+}
+
+.gantt .bar-label.WorksText.big {
+    visibility: hidden;
+}
+
+.gantt .bar-label.WorksBox.big {
+    visibility: hidden;
+}
+
+.gantt .bar-label.big {
+    fill: #555;
+    visibility: hidden;
+    /* ESCONDEMOS EL NOMBRE */
+}
+
+.gantt .bar-label.date.big {
+    visibility: hidden;
+    /*ESCONDEMOS LA FECHA*/
+}
+
+.gantt .bar-label.dateImage.big {
+    visibility: hidden;
+}
+
+.gantt .bar-label.BigCase.big {
+    /*EN CASO DE TENER ESPACIO*/
+    visibility: visible;
+    fill: #e9e6e6;
+}
+
+.gantt .bar-label.BigCaseSon.big {
+    /*EN CASO DE TENER ESPACIO*/
+    visibility: visible;
+    fill: black;
+}
+
+
+/*****************************************/
+
+.gantt .handle {
+    fill: rgb(152, 151, 151);
+    cursor: ew-resize;
+    opacity: 0;
+    /* visibility: hidden; */
+    /*transition: opacity 0.3s ease;*/
+}
+
+.rectExtend {
+    opacity: 0;
+}
+
+.gantt .bar-wrapper {
+    cursor: pointer;
+    outline: none;
+}
+
+
+/* .gantt .bar-progress {
+    visibility: hidden;
+} */
+
+.gantt .bar-wrapper:hover .bar-progress {
+    fill: #8a8aff;
+}
+
+.gantt .bar-wrapper:hover .handle {
+    visibility: visible;
+}
+
+.gantt .bar-wrapper.active .bar {
+    fill: rgb(#63DFED, #FFFFFF, #7A86A1);
+}
+
+.gantt .bar-wrapper.active .bar-progress {
+    fill: rgb(#63DFED, #FFFFFF, #7A86A1);
+}
+
+.gantt .lower-text,
+.gantt .upper-text,
+.gantt .lower-text-today {
+    font-size: 12px;
+    text-anchor: middle;
+}
+
+.gantt .lower-text-rect {
+    fill: red;
+}
+
+.gantt .upper-text {
+    fill: #555;
+}
+
+.gantt .lower-text {
+    fill: #333;
+}
+
+.gantt .lower-text-today {
+    fill: #fff;
+}
+
+.gantt .hide {
+    display: none;
+}
+
+.gantt-container {
+    position: relative;
+    overflow: auto;
+    font-size: 12px;
+}
+
+.gantt-container .popup-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 0;
+    color: #959da5;
+    border-radius: 3px;
+}
+
+.gantt-container .popup-wrapper .title {
+    border-bottom: 3px solid #a3a3ff;
+    padding: 10px;
+}
+
+.gantt-container .popup-wrapper .subtitle {
+    padding: 10px;
+    color: #dfe2e5;
+}
+
+.gantt-container .popup-wrapper .pointer {
+    position: absolute;
+    height: 5px;
+    margin: 0 0 0 -5px;
+    border: 5px solid transparent;
+    border-top-color: rgba(0, 0, 0, 0.8);
+}
