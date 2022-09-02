@@ -1,3 +1,1 @@
-
-# SEBAS
 # Bios-gantt
