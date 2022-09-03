@@ -691,7 +691,6 @@ var Gantt = (function() {
             if (this.task.name != '') {
                 if ((this.gantt.dependency_map[this.task.id] != undefined && this.task.Father)) {
                     if (this.task.id == 'task 9') {
-                        console.log(this.task.id, 'primera etapa');
 
                     }
                     this.bar_group.addEventListener('mouseover', MouseOver, false);
@@ -733,12 +732,10 @@ var Gantt = (function() {
                     }
                 } else {
                     if (this.task.id == 'task 9') {
-                        console.log(this.task.id, 'segunda etapa');
 
                     }
 
                     this.bar_group.addEventListener('mouseover', MouseOver, false);
-                    console.log(this.task.dependencies)
                     if (GanttGeneral.dependency_map[this.task.id] == null | undefined) {
                         this.bar_group.addEventListener('mouseleave', MouseLeave, false);
 
@@ -958,12 +955,10 @@ var Gantt = (function() {
                         for (var i = 0; i < GanttGeneral.tasks.length; i++) {
 
                             if (GanttGeneral.tasks[i].Father && GanttGeneral.dependency_map[CircleOutputArrow.task.id] != null | undefined) {
-                                //console.log('entrada includes');
                                 if (GanttGeneral.dependency_map[CircleOutputArrow.task.id].includes(GanttGeneral.tasks[i].id)) {
                                     DejarEstado = true;
                                     break;
                                 }
-                                //console.log('SALIDA includes');
                             }
                         }
                         if (!DejarEstado) {
@@ -1292,18 +1287,6 @@ var Gantt = (function() {
                     class: 'bar-label WorksBox',
                     append_to: this.bar_group,
                 });
-
-                // this.WorksValueConstant = 50;
-                // if (this.task.dependencies.length >= 100) {
-                //     this.WorksValueConstant = 45;
-                // }
-
-
-                // var task_box_list = this.gantt.dependency_map[this.task.id];
-                // var task_box = task_box_list.length
-                // if (task_box == undefined) {
-                //     task_box = 0;
-                // }
 
                 createSVG('text', {
                     innerHTML: 0,
@@ -2068,24 +2051,42 @@ var Gantt = (function() {
                 a ${curve} ${curve} 0 0 ${clockwise} ${curve} ${curve_y}
                 L ${end_x} ${end_y}
                 `;
-            this.crossPositionX = ((end_x - start_x) / 2) + start_x;
-            this.crossPositiony = (start_y) + ((end_y - start_y) / 2); //  GUARDAMOS LAS POSICIONES PARA LAS CRUCES.
+
+
+
+            var down2 = down_2 - (start_y + down_1);
+
+            if (end_y > start_y && end_x > start_x) {
+                this.crossPositionX = ((end_x - start_x) / 2) + start_x - 11;
+            } else if (end_y > start_y && start_x > end_x) {
+                this.crossPositionX = ((start_x - end_x) / 2) + end_x - 11;
+            } else if (end_y < start_y && start_x < end_x) {
+                this.crossPositionX = ((end_x - start_x) / 2) + start_x - 11;
+
+            } else {
+                this.crossPositionX = ((start_x - end_x) / 2) + end_x - 11;
+            }
+            this.crossPositiony = start_y + down_1 + 20 - 5.5;
+
+
 
         }
 
         draw() {
             this.element = createSVG('path', {
                 d: this.path,
+                width: 20,
                 'data-from': this.from_task.task.id,
                 'data-to': this.to_task.task.id,
             });
+            console.log(this);
 
 
             this.element.addEventListener('mouseover', (event) => {
                     this.element.style.stroke = 'red';
-                    this.to_task.handle_group.childNodes[2].style.opacity = 1;
+                    this.to_task.handle_group.childNodes[2].style.visibility = 'visible';
                     this.to_task.handle_group.childNodes[2].setAttribute('x', this.crossPositionX);
-                    this.to_task.hanlde_group.childNodes[2].setAttribute('y', this.crossPositiony);
+                    this.to_task.handle_group.childNodes[2].setAttribute('y', this.crossPositiony);
 
                 }, false)
                 ///HOLA MUNDO
@@ -2128,13 +2129,52 @@ var Gantt = (function() {
                 GanttGeneral.bind_events();
 
             });
+            // this.to_task.handle_group.childNodes[2].addEventListener('click', (event) => {
+            //     var bandera = false;
+            //     //ELIMINAMOS LA ASOCIACIÓN EN EL DEPENDECIES MAP
+            //     var Indice = GanttGeneral.dependency_map[this.from_task.task.id].findIndex(task => task === this.to_task.task.id);
+            //     GanttGeneral.dependency_map[this.from_task.task.id].splice(Indice, 1);
+            //     for (var i = 0; i < GanttGeneral.tasks.length; i++) {
+            //         if (GanttGeneral.tasks[i].id == this.to_task.task.id) {
+
+
+            //             // ENCONTRAMOS LA TAREA ASOCIADA
+
+            //             //console.log(GanttGeneral.tasks[i].dependencies.filter((item) => item !== this.from_task.task.id), this.from_task.task.id);
+            //             var arreglo = [];
+            //             new Set(GanttGeneral.tasks[i].dependencies).forEach(k => arreglo.push(k)) // ELIMINAMOS LOS REPETIDOS...aa.forEach(k => ar.push(k))
+            //             GanttGeneral.tasks[i].dependencies = arreglo;
+            //             // CREAMOS OTRO CICLO PARA ENCONTRAR LA POSICIÓN EN EL ARREGLO DE LA DEPENDENCIA:
+            //             for (var d = 0; d < GanttGeneral.tasks[i].dependencies.length; d++) {
+            //                 if (GanttGeneral.tasks[i].dependencies[d] == this.from_task.task.id) {
+            //                     GanttGeneral.tasks[i].dependencies.splice(d, 1); // ELIMINAMOS LA ASIGNACIÓN
+            //                     bandera = true;
+            //                     break;
+            //                 }
+            //             }
+            //             if (bandera) {
+            //                 break; // TERMINAMOS EL CICLO
+            //             }
+            //         }
+            //     }
+            //     //GanttGeneral.make_arrow_update();
+            //     GanttGeneral.setup_tasks(GanttGeneral.tasks);
+            //     //GanttGeneral.render();
+            //     // initializ with default view mode
+            //     GanttGeneral.change_view_mode();
+            //     //console.log('exit change view');
+            //     GanttGeneral.bind_events();
+
+
+            // }, false)
+
             this.element.addEventListener('mouseleave', (event) => {
                 this.element.style.stroke = '#6149CD';
-                console.log(this);
-                this.to_task.handle_group.childNodes[2].style.opacity = 0;
+                this.to_task.handle_group.childNodes[2].style.visibility = 'hidden';
 
             }, false)
         }
+
 
         update() {
             this.calculate_path();

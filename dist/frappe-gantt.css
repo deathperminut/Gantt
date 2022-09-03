@@ -58,7 +58,7 @@
     fill: none;
     opacity: 1;
     stroke: #6149CD;
-    stroke-width: 1.5;
+    stroke-width: 2;
 }
 
 .gantt .bar {
@@ -109,7 +109,7 @@
 }
 
 .delete {
-    opacity: 0;
+    visibility: hidden;
 }
 
 .extend {
