@@ -1549,6 +1549,10 @@ var Gantt = (function() {
 
                 }
 
+            } else {
+                if (this.task.name == '') {
+                    this.update_labelFather_position_null();
+                }
             }
 
 
