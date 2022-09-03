@@ -689,11 +689,13 @@ var Gantt = (function() {
             /***************GENERAMOS EL LISTENER DEL BOX**************************** */
             //this.handle_group.addEventListener('mouseover', MouseOver, false);
             if (this.task.name != '') {
-                if ((this.gantt.dependency_map[this.task.id] != undefined && this.task.Father)) {
-                    if (this.task.id == 'task 9') {
 
-                    }
-                    this.bar_group.addEventListener('mouseover', MouseOver, false);
+
+                if ((this.gantt.dependency_map[this.task.id] != undefined && this.task.Father)) {
+                    // SI ES UN PADRE Y TIENE TAREAS RELACIONADAS PRIMERO LE ACTIVAMOS EL MOUSEOVER PERO TOCA PENSAR SI HACER
+                    // LO MISMO CON EL MAUSE LEAVE PUESTO QUE SI ES UN PADRE LA IDEA ES DEJARLO QUIETO
+                    this.bar_group.addEventListener('mouseover', MouseOver, false); // ACTIVAMOS EL MOUSE OVER 
+
 
                     if (dependenciesFather == null) {
                         this.bar_group.addEventListener('mouseleave', MouseLeave, false);
@@ -731,9 +733,7 @@ var Gantt = (function() {
 
                     }
                 } else {
-                    if (this.task.id == 'task 9') {
 
-                    }
 
                     this.bar_group.addEventListener('mouseover', MouseOver, false);
                     if (GanttGeneral.dependency_map[this.task.id] == null | undefined) {
@@ -742,6 +742,20 @@ var Gantt = (function() {
                     }
 
 
+
+                }
+                /// SOLUCIONAR POR ACA OJOOOOOOOO
+                if (this.task.Father && this.gantt.dependency_map[this.task.id] != null | undefined) {
+                    console.log('se logro hpt 1');
+                    /// MIRAMOS SI ES UN PADRE Y TIENE CONEXIONES MIRAMOS SI TAMBIEN SON PADRES O NO.
+                    for (var i = 0; i < GanttGeneral.tasks.length; i++) {
+                        console.log(GanttGeneral.tasks[i].father, this.gantt.dependency_map[this.task.id].indexOf(GanttGeneral.tasks[i].id));
+                        if (GanttGeneral.tasks[i].Father && this.gantt.dependency_map[this.task.id].indexOf(GanttGeneral.tasks[i].id) != -1) {
+                            console.log('se logro hpt');
+                            this.bar_group.removeEventListener('mouseleave', MouseLeave, false);
+                        }
+
+                    }
 
                 }
 
@@ -1039,16 +1053,7 @@ var Gantt = (function() {
 
         draw_progress_bar() {
             if (this.invalid) return;
-            // this.$bar_progress = createSVG('rect', {
-            //     x: this.x,
-            //     y: this.y,
-            //     width: this.progress_width + 27,
-            //     height: this.height,
-            //     rx: this.corner_radius,
-            //     ry: this.corner_radius,
-            //     class: 'bar-progress',
-            //     append_to: this.bar_group,
-            // });
+
             this.$bar = createSVG('image', {
                 href: 'dist/Imag/Grupo359.png',
                 class: 'delete',
