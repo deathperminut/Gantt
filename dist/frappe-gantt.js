@@ -882,7 +882,9 @@ var Gantt = (function() {
 
                                         GanttGeneral.bars[i].bar_group.childNodes[0].style.opacity = 1;
                                         GanttGeneral.bars[i].bar_group.childNodes[0].style.fill = 'red';
-                                        ArrayEncendidos.push(GanttGeneral.bars[i].bar_group.childNodes[0]);
+                                        //ArrayEncendidos.push(GanttGeneral.bars[i].bar_group.childNodes[0]);
+                                        ArrayEncendidos.push(GanttGeneral.bars[i]);
+                                        //console.log(GanttGeneral.bars[i]);
 
                                     }
 
@@ -900,7 +902,8 @@ var Gantt = (function() {
                                     if (!GanttGeneral.bars[i].task.dependencies.includes(this.task.id)) {
                                         GanttGeneral.bars[i].bar_group.childNodes[0].style.opacity = 1;
                                         GanttGeneral.bars[i].bar_group.childNodes[0].style.fill = 'red';
-                                        ArrayEncendidos.push(GanttGeneral.bars[i].bar_group.childNodes[0]);
+                                        ArrayEncendidos.push(GanttGeneral.bars[i]);
+                                        //console.log(GanttGeneral.bars[i].bar_group);
 
                                     }
 
@@ -990,8 +993,13 @@ var Gantt = (function() {
                     GenerateArrow = false;
 
                     for (var i = 0; i < ArrayEncendidos.length; i++) {
-                        ArrayEncendidos[i].style.opacity = 0;
-                        ArrayEncendidos[i].style.fill = 'black';
+                        if (ArrayEncendidos[i].task.dependencies.length == 0) {
+                            ArrayEncendidos[i].bar_group.childNodes[0].style.opacity = 0;
+                            ArrayEncendidos[i].bar_group.childNodes[0].style.fill = 'black';
+                        } else {
+                            ArrayEncendidos[i].bar_group.childNodes[0].style.fill = 'black';
+
+                        }
                     }
                     ArrayEncendidos = []; // VACIAMOS EL ARREGLO
 
