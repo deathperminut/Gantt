@@ -2049,10 +2049,16 @@ var Gantt = (function() {
                 this.to_task.$bar.getHeight() / 2 -
                 curve_y;
             const left = this.to_task.$bar.getX() - this.gantt.options.padding;
-
+            if (start_y > end_y) {
+                var down1 = -down_1 - 20
+                this.crossPositiony = start_y + down1 - 5.5;
+            } else {
+                this.crossPositiony = start_y + down_1 + 20 - 5.5;
+                var down1 = down_1 + 20
+            }
             this.path = `
                 M ${start_x} ${start_y}
-                v ${down_1+20}
+                v ${down1}
                 a ${curve} ${curve} 0 0 1 -${curve} ${curve}
                 H ${left}
                 a ${curve} ${curve} 0 0 ${clockwise} -${curve} ${curve_y}
@@ -2075,7 +2081,7 @@ var Gantt = (function() {
             } else {
                 this.crossPositionX = ((start_x - end_x) / 2) + end_x - 11;
             }
-            this.crossPositiony = start_y + down_1 + 20 - 5.5;
+
 
 
 
