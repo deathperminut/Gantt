@@ -677,6 +677,7 @@ var Gantt = (function() {
 
             /*************GENERAMOS EL LISTENER PARA LOS HANDLERS**********************/
             if (this.task.name != '') {
+                console.log('causa especial');
                 this.handle_group.addEventListener('mouseover', MouseOverHandler, false);
                 this.handle_group.addEventListener('mouseleave', MouseLeaveHandler, false);
                 this.bar_group.addEventListener('mouseover', MouseOverHandler, false);
@@ -704,10 +705,12 @@ var Gantt = (function() {
 
 
                     if (dependenciesFather == null) {
+                        console.log('CASUA 3');
                         this.bar_group.addEventListener('mouseleave', MouseLeave, false);
 
                     } else {
                         if (!dependenciesFather.includes(this.task.id)) {
+                            console.log('CASUA 4');
                             this.bar_group.addEventListener('mouseleave', MouseLeave, false);
                         } else {
 
@@ -728,6 +731,7 @@ var Gantt = (function() {
 
                             }
                             if (!VariableBandera) {
+                                console.log('CASUA 5');
                                 this.bar_group.addEventListener('mouseleave', MouseLeave, false);
                             }
 
@@ -743,6 +747,7 @@ var Gantt = (function() {
 
                     this.bar_group.addEventListener('mouseover', MouseOver, false);
                     if (GanttGeneral.dependency_map[this.task.id] == null | undefined) {
+                        console.log('CASUA 6');
                         this.bar_group.addEventListener('mouseleave', MouseLeave, false);
 
                     }
@@ -754,7 +759,6 @@ var Gantt = (function() {
                 if (this.task.Father && this.gantt.dependency_map[this.task.id] != null | undefined) {
                     /// MIRAMOS SI ES UN PADRE Y TIENE CONEXIONES MIRAMOS SI TAMBIEN SON PADRES O NO.
                     for (var i = 0; i < GanttGeneral.tasks.length; i++) {
-                        //console.log(GanttGeneral.tasks[i].father, this.gantt.dependency_map[this.task.id].indexOf(GanttGeneral.tasks[i].id));
                         if (GanttGeneral.tasks[i].Father && this.gantt.dependency_map[this.task.id].indexOf(GanttGeneral.tasks[i].id) != -1) {
                             this.bar_group.removeEventListener('mouseleave', MouseLeave, false);
                         }
@@ -778,6 +782,7 @@ var Gantt = (function() {
                 //CAMBIAMOS PROPIEDADES
                 CircleOutput[0].style.opacity = 1;
                 Line[0].style.opacity = 1;
+
             }
 
             function MouseOverNodo(event) {
@@ -819,8 +824,17 @@ var Gantt = (function() {
                 var CircleOutput = BarProgress.getElementsByClassName('CircleOutput');
                 var Line = BarProgress.getElementsByClassName('Line');
                 //CAMBIAMOS PROPIEDADES
-                CircleOutput[0].style.opacity = 0;
-                Line[0].style.opacity = 0;
+                if (CircleOutput[0].style.fill == "red") {
+                    console.log('ARREGLADO PBS');
+                    CircleOutput[0].style.opacity = 1;
+                    Line[0].style.opacity = 1;
+
+                } else {
+
+                    CircleOutput[0].style.opacity = 0;
+                    Line[0].style.opacity = 0;
+
+                }
 
             }
 
@@ -833,7 +847,7 @@ var Gantt = (function() {
             }
 
             function ClickArrowStart(event) {
-                var BarProgress = event.path[1].removeEventListener('mouseleave', MouseLeave, false); // DEJAMOS FIJO LA FLECHA
+                event.path[1].removeEventListener('mouseleave', MouseLeave, false); // DEJAMOS FIJO LA FLECHA
             }
 
             function ClickArrowEnd(event) {
@@ -841,9 +855,14 @@ var Gantt = (function() {
             }
             if (this.task.name != '') {
                 this.bar_group.getElementsByClassName('CircleOutput')[0].addEventListener('click', (event) => {
-                    var BarProgress = event.path[1].removeEventListener('mouseleave', MouseLeave, false); // DEJAMOS FIJO LA FLECHA
+                    console.log('PONEMOS FIJO LA CONEXIÓN.');
+                    event.path[1].removeEventListener('mouseleave', MouseLeave, false); // DEJAMOS FIJO LA FLECHA
+                    console.log(event.path[1]);
+                    console.log('PONEMOS FIJO LA CONEXIÓN2.');
                     ElementListener = event.path[1];
                     if (GenerateArrow) {
+                        event.path[1].removeEventListener('mouseleave', MouseLeave, false); // DEJAMOS FIJO LA FLECHA
+                        console.log('opcion 1');
                         return;
                     }
 
@@ -851,8 +870,8 @@ var Gantt = (function() {
 
 
 
-
                     if (this.task.Father) {
+
                         for (var i = 0; i < length_bars; i++) {
                             //SOLO MOSTRAMOS LAS PADRES EN CASO DE SER TARJETAS PADRE...
                             if (GanttGeneral.bars[i].task.id != this.task.id) {
@@ -860,6 +879,7 @@ var Gantt = (function() {
 
                                     if (!GanttGeneral.bars[i].task.dependencies.includes(this.task.id) && GanttGeneral.bars[i].task.name != '' &&
                                         !this.task.dependencies.includes(GanttGeneral.bars[i].task.id)) {
+
                                         GanttGeneral.bars[i].bar_group.childNodes[0].style.opacity = 1;
                                         GanttGeneral.bars[i].bar_group.childNodes[0].style.fill = 'red';
                                         ArrayEncendidos.push(GanttGeneral.bars[i].bar_group.childNodes[0]);
@@ -908,34 +928,49 @@ var Gantt = (function() {
                                     GanttGeneral.bars[b].bar_group.childNodes[0].style.fill = 'black';
 
 
+
                                 }
 
 
 
                             }
 
+
+                        }
+                    }
+                    if (ArrayEncendidos.length == 0) {
+                        alert('No tiene nodos de conexion permitidos...');
+                        GenerateArrow = false;
+                        console.log('entro 1');
+                        this.bar_group.getElementsByClassName('CircleOutput')[0].style.fill = "black";
+                        this.bar_group.getElementsByClassName('CircleOutput')[0].style.opacity = 0;
+                        this.bar_group.getElementsByClassName('Line')[0].style.opacity = 0;
+                        event.path[1].addEventListener('mouseleave', MouseLeave, false);
+
+
+                    } else {
+                        /**************************************************************************** */
+                        GenerateArrow = true; // PASAMOS LA VARIABLE PARA INDICAR QUE ESTAMOS EN ESTADO PARA CREAR UNA CONEXIÓN.
+                        console.log('CONEXIÓN HABILITADA ESPERANDO NODO RECEPTOR...');
+                        CircleOutputArrow = this; // ALMACENAMOS EL ELEMENTO ASOCIADO DE LA TAREA INICIAL.
+                        this.bar_group.getElementsByClassName('CircleOutput')[0].style.fill = "red";
+                        //DESAPARECEMOS UNICAMENTE EL CIRCULO SI NO TIENE UNA CONEXIÓN PREVIA..
+                        var ListaDependencias = Object.values(GanttGeneral.dependency_map) // OBTENEMOS LA LISTA DE VALORES DEL DEPENDENCY_MAP
+                        var DetectorConector = false;
+                        for (var i = 0; i < ListaDependencias.length; i++) {
+                            DetectorConector = ListaDependencias[i].includes(this.task.id);
+                            if (DetectorConector) {
+                                break;
+                            }
+                        }
+                        if (!DetectorConector) {
+                            this.bar_group.getElementsByClassName('CircleInput')[0].style.opacity = 0;
+
                         }
                     }
 
 
-                    /**************************************************************************** */
-                    GenerateArrow = true; // PASAMOS LA VARIABLE PARA INDICAR QUE ESTAMOS EN ESTADO PARA CREAR UNA CONEXIÓN.
-                    console.log('CONEXIÓN HABILITADA ESPERANDO NODO RECEPTOR...');
-                    CircleOutputArrow = this; // ALMACENAMOS EL ELEMENTO ASOCIADO DE LA TAREA INICIAL.
-                    this.bar_group.getElementsByClassName('CircleOutput')[0].style.fill = "red";
-                    //DESAPARECEMOS UNICAMENTE EL CIRCULO SI NO TIENE UNA CONEXIÓN PREVIA..
-                    var ListaDependencias = Object.values(GanttGeneral.dependency_map) // OBTENEMOS LA LISTA DE VALORES DEL DEPENDENCY_MAP
-                    var DetectorConector = false;
-                    for (var i = 0; i < ListaDependencias.length; i++) {
-                        DetectorConector = ListaDependencias[i].includes(this.task.id);
-                        if (DetectorConector) {
-                            break;
-                        }
-                    }
-                    if (!DetectorConector) {
-                        this.bar_group.getElementsByClassName('CircleInput')[0].style.opacity = 0;
 
-                    }
 
 
 
@@ -962,6 +997,7 @@ var Gantt = (function() {
 
                     if (!CircleOutputArrow.task.Father) {
                         //SI ES UN HIJO Y TIENE ALGUNA CONEXIÓN DEJO LOS MARCADORES
+                        console.log('CASUA 1');
                         if (Object.keys(GanttGeneral.dependency_map).includes(CircleOutputArrow.task.id) == false) {
                             //SI NO EXISTE CONEXIÓN
                             CircleOutputArrow.bar_group.childNodes[2].style.opacity = 0;
@@ -992,6 +1028,7 @@ var Gantt = (function() {
                             CircleOutputArrow.bar_group.childNodes[1].style.opacity = 0;
                             CircleOutputArrow.bar_group.childNodes[1].style.fill = 'black';
                             CircleOutputArrow.bar_group.addEventListener('mouseleave', MouseLeave);
+                            console.log('CASUA 2');
 
 
                         }
@@ -1014,6 +1051,7 @@ var Gantt = (function() {
             this.bar_group.getElementsByClassName('CircleInput')[0].addEventListener('click', (event) => {
                 if (GenerateArrow) {
                     console.log('CONECTADA');
+                    ArrayEncendidos = []; // VACIAMOS EL ARREGLO
                     CircleOutputArrow.bar_group.getElementsByClassName('CircleOutput')[0].style.fill = "#000";
                     /* GENERAMOS LA CONEXIÓN EN LOS DATOS */
 
@@ -1246,7 +1284,6 @@ var Gantt = (function() {
                 var ImagenInfo = this.bar_group.getElementsByClassName('bar-label InfoImage')[0];
                 ImagenInfo.addEventListener('mouseleave', (event) => {
                     GanttGeneral.hide_popup();
-                    console.log('POPUP');
                 }, false);
 
 
@@ -1357,11 +1394,9 @@ var Gantt = (function() {
                     for (var i = 0; i < GanttGeneral.tasks.length; i++) {
                         if (GanttGeneral.tasks[i].id == this.task.id) {
                             if (i == GanttGeneral.tasks.length - 1) {
-                                console.log('PRIMER FILTRO');
                                 GanttGeneral.tasks.push(task); // SI ES LA ULTIMA TAREA LA AGREGAMOS AL FINAL
                                 break;
                             } else {
-                                console.log('SEGUNDO FILTRO');
                                 GanttGeneral.tasks.splice(i + 1, 0, task); // LA AGREGAMOS JUSTO DESPUES PARA MANTENER LA ESTETICA DEL PROYECTO
                                 break;
                             }
@@ -2121,8 +2156,6 @@ var Gantt = (function() {
 
 
                         // ENCONTRAMOS LA TAREA ASOCIADA
-
-                        //console.log(GanttGeneral.tasks[i].dependencies.filter((item) => item !== this.from_task.task.id), this.from_task.task.id);
                         var arreglo = [];
                         new Set(GanttGeneral.tasks[i].dependencies).forEach(k => arreglo.push(k)) // ELIMINAMOS LOS REPETIDOS...aa.forEach(k => ar.push(k))
                         GanttGeneral.tasks[i].dependencies = arreglo;
