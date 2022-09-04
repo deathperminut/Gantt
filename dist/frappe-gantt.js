@@ -1497,7 +1497,7 @@ var Gantt = (function() {
                 this.gantt.options.language
             );
             const end_date = date_utils.format(
-                date_utils.add(this.task._end, -1, 'second'),
+                date_utils.add(this.task._end, 0, 'second'),
                 'MMM D',
                 this.gantt.options.language
             );
@@ -2136,44 +2136,7 @@ var Gantt = (function() {
                 GanttGeneral.bind_events();
 
             });
-            // this.to_task.handle_group.childNodes[2].addEventListener('click', (event) => {
-            //     var bandera = false;
-            //     //ELIMINAMOS LA ASOCIACIÓN EN EL DEPENDECIES MAP
-            //     var Indice = GanttGeneral.dependency_map[this.from_task.task.id].findIndex(task => task === this.to_task.task.id);
-            //     GanttGeneral.dependency_map[this.from_task.task.id].splice(Indice, 1);
-            //     for (var i = 0; i < GanttGeneral.tasks.length; i++) {
-            //         if (GanttGeneral.tasks[i].id == this.to_task.task.id) {
 
-
-            //             // ENCONTRAMOS LA TAREA ASOCIADA
-
-            //             //console.log(GanttGeneral.tasks[i].dependencies.filter((item) => item !== this.from_task.task.id), this.from_task.task.id);
-            //             var arreglo = [];
-            //             new Set(GanttGeneral.tasks[i].dependencies).forEach(k => arreglo.push(k)) // ELIMINAMOS LOS REPETIDOS...aa.forEach(k => ar.push(k))
-            //             GanttGeneral.tasks[i].dependencies = arreglo;
-            //             // CREAMOS OTRO CICLO PARA ENCONTRAR LA POSICIÓN EN EL ARREGLO DE LA DEPENDENCIA:
-            //             for (var d = 0; d < GanttGeneral.tasks[i].dependencies.length; d++) {
-            //                 if (GanttGeneral.tasks[i].dependencies[d] == this.from_task.task.id) {
-            //                     GanttGeneral.tasks[i].dependencies.splice(d, 1); // ELIMINAMOS LA ASIGNACIÓN
-            //                     bandera = true;
-            //                     break;
-            //                 }
-            //             }
-            //             if (bandera) {
-            //                 break; // TERMINAMOS EL CICLO
-            //             }
-            //         }
-            //     }
-            //     //GanttGeneral.make_arrow_update();
-            //     GanttGeneral.setup_tasks(GanttGeneral.tasks);
-            //     //GanttGeneral.render();
-            //     // initializ with default view mode
-            //     GanttGeneral.change_view_mode();
-            //     //console.log('exit change view');
-            //     GanttGeneral.bind_events();
-
-
-            // }, false)
 
             this.element.addEventListener('mouseleave', (event) => {
                 this.element.style.stroke = '#6149CD';
