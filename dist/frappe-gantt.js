@@ -582,6 +582,8 @@ var Gantt = (function() {
         draw_bar() {
 
 
+
+
             /*CREAMOS EL LIENZO PARA LOS CIRCULOS DE CONEXIÓN*/
             //this.draw_progress_bar();
 
@@ -851,7 +853,8 @@ var Gantt = (function() {
                         if (GanttGeneral.bars[i].task.id != this.task.id) {
                             if (GanttGeneral.bars[i].task.Father) {
 
-                                if (!GanttGeneral.bars[i].task.dependencies.includes(this.task.id) && GanttGeneral.bars[i].task.name != '') {
+                                if (!GanttGeneral.bars[i].task.dependencies.includes(this.task.id) && GanttGeneral.bars[i].task.name != '' &&
+                                    !this.task.dependencies.includes(GanttGeneral.bars[i].task.id)) {
                                     GanttGeneral.bars[i].bar_group.childNodes[0].style.opacity = 1;
                                     GanttGeneral.bars[i].bar_group.childNodes[0].style.fill = 'red';
                                     ArrayEncendidos.push(GanttGeneral.bars[i].bar_group.childNodes[0]);
@@ -868,7 +871,7 @@ var Gantt = (function() {
                     for (var i = 0; i < length_bars; i++) {
                         // SOLO MOSTRAMOS LOS HIJOS EN CASO DE SER TARJETA HIJOS...
                         if (GanttGeneral.bars[i].task.id != this.task.id) {
-                            if (!GanttGeneral.bars[i].task.Father && GanttGeneral.bars[i].task.name != '') {
+                            if (!GanttGeneral.bars[i].task.Father && GanttGeneral.bars[i].task.name != '' && !this.task.dependencies.includes(GanttGeneral.bars[i].task.id)) {
                                 if (!GanttGeneral.bars[i].task.dependencies.includes(this.task.id)) {
                                     GanttGeneral.bars[i].bar_group.childNodes[0].style.opacity = 1;
                                     GanttGeneral.bars[i].bar_group.childNodes[0].style.fill = 'red';
@@ -893,7 +896,10 @@ var Gantt = (function() {
                         for (var b = 0; b < length_bars; b++) {
                             // BUSCAMOS LOS PADRES ASOCIADOS Y NO LOS MOSTRAMOS...
                             if (GanttGeneral.bars[b].task.id === ListaDependenciasPadres[i]) {
-                                GanttGeneral.bars[b].bar_group.childNodes[0].style.opacity = 0;
+                                if (GanttGeneral.bars[b].bar_group.childNodes[0].style.opacity != 1) {
+                                    GanttGeneral.bars[b].bar_group.childNodes[0].style.opacity = 0;
+                                }
+                                //GanttGeneral.bars[b].bar_group.childNodes[0].style.opacity = 0;
                                 GanttGeneral.bars[b].bar_group.childNodes[0].style.fill = 'black';
 
 
@@ -1427,17 +1433,9 @@ var Gantt = (function() {
                 x: this.x - 14, // YA QUE NO PODEMOS OBTENERLA DESDE AQUI LA CUADRAMOS ABAJO EN EL RESETEO
                 y: this.y + this.height / 10,
                 width: 11,
-                heigth: 11,
+                height: 11,
                 append_to: this.handle_group
-            }); // AGREGAMOS LA IMAGEN.
-            createSVG('rect', {
-                class: 'extend',
-                x: this.x + this.width, // YA QUE NO PODEMOS OBTENERLA DESDE AQUI LA CUADRAMOS ABAJO EN EL RESETEO
-                y: this.y,
-                width: 10,
-                heigth: 10,
-                append_to: this.handle_group
-            }); // AGREGAMOS LA IMAGEN.
+            });
 
 
             if (this.task.progress && this.task.progress < 100) {
@@ -2090,8 +2088,6 @@ var Gantt = (function() {
                 'data-from': this.from_task.task.id,
                 'data-to': this.to_task.task.id,
             });
-            console.log(this);
-
 
             this.element.addEventListener('mouseover', (event) => {
                     this.element.style.stroke = 'red';
@@ -2136,7 +2132,6 @@ var Gantt = (function() {
                 //GanttGeneral.render();
                 // initializ with default view mode
                 GanttGeneral.change_view_mode();
-                //console.log('exit change view');
                 GanttGeneral.bind_events();
 
             });
@@ -2340,7 +2335,6 @@ var Gantt = (function() {
                 // convert to Date objects
                 task._start = date_utils.parse(task.start);
                 task._end = date_utils.parse(task.end);
-                console.log(task._end);
 
                 // make task invalid if duration too large
                 if (date_utils.diff(task._end, task._start, 'year') > 10) {
