@@ -526,7 +526,7 @@ var Gantt = (function() {
             if (FirstTime || !Change) {
                 this.duration =
                     date_utils.diff(this.task._end, this.task._start, 'hour') /
-                    this.gantt.options.step + 1;
+                    this.gantt.options.step;
             } else {
                 this.duration =
                     date_utils.diff(this.task._end, this.task._start, 'hour') /
@@ -1169,6 +1169,7 @@ var Gantt = (function() {
 
 
 
+            this.task._end = date_utils.add(this.task._end, -1, 'second');
 
             createSVG('text', {
                 innerHTML: date_utils.format(
@@ -1497,7 +1498,7 @@ var Gantt = (function() {
                 this.gantt.options.language
             );
             const end_date = date_utils.format(
-                date_utils.add(this.task._end, 0, 'second'),
+                date_utils.add(this.task._end, -1, 'second'),
                 'MMM D',
                 this.gantt.options.language
             );
@@ -1588,7 +1589,24 @@ var Gantt = (function() {
 
                 return;
 
+            } else {
+                var IdTarea = this.task.id;
+                for (var i = 0; i < this.gantt.tasks.length; i++) {
+                    if (this.gantt.tasks[i].id == IdTarea) {
+                        this.gantt.tasks[i].end = new_end_date;
+                        this.gantt.tasks[i].start = new_start_date;
+
+                    }
+
+                }
+
+                this.gantt.trigger_event('date_change', [
+                    this.task,
+                    new_start_date,
+                    date_utils.add(new_end_date, 0, 'second'), // UN CAMBIO
+                ]);
             }
+
 
 
             var label_2 = this.group.querySelector(this.ClassDate);
@@ -1599,21 +1617,7 @@ var Gantt = (function() {
                 this.task._end,
                 'DD-MMM'
             )
-            var IdTarea = this.task.id;
-            for (var i = 0; i < this.gantt.tasks.length; i++) {
-                if (this.gantt.tasks[i].id == IdTarea) {
-                    this.gantt.tasks[i].end = new_end_date;
-                    this.gantt.tasks[i].start = new_start_date;
 
-                }
-
-            }
-
-            this.gantt.trigger_event('date_change', [
-                this.task,
-                new_start_date,
-                date_utils.add(new_end_date, +1, 'second'), // UN CAMBIO
-            ]);
         }
 
         progress_changed() {
@@ -2336,6 +2340,7 @@ var Gantt = (function() {
                 // convert to Date objects
                 task._start = date_utils.parse(task.start);
                 task._end = date_utils.parse(task.end);
+                console.log(task._end);
 
                 // make task invalid if duration too large
                 if (date_utils.diff(task._end, task._start, 'year') > 10) {
@@ -2710,16 +2715,7 @@ var Gantt = (function() {
 
         make_dates() {
             for (let date of this.get_dates_to_draw()) {
-                // createSVG('rect', {
-                //     x: date.lower_x - 10,
-                //     y: date.lower_y - 20,
-                //     ry: 10,
-                //     rx: 10,
-                //     width: "20px",
-                //     height: "25px",
-                //     class: 'lower-text-rect',
-                //     append_to: this.layers.date,
-                // });
+
                 if (date.today) {
                     createSVG('text', {
                         x: date.lower_x,
