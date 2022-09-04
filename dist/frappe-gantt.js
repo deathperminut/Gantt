@@ -683,6 +683,10 @@ var Gantt = (function() {
                 this.bar_group.addEventListener('mouseleave', MouseLeaveHandler, false);
                 //this.handle_group.addEventListener('mouseover', MouseOverNodo, false);
                 //this.handle_group.addEventListener('mouseleave', MouseLeaveNodo, false);
+            } else {
+                this.bar_group.childNodes[0].style.visibility = 'hidden';
+                this.bar_group.childNodes[1].style.visibility = 'hidden';
+                this.bar_group.childNodes[2].style.visibility = 'hidden';
             }
 
 
@@ -835,29 +839,51 @@ var Gantt = (function() {
             function ClickArrowEnd(event) {
 
             }
-            this.bar_group.getElementsByClassName('CircleOutput')[0].addEventListener('click', (event) => {
-                var BarProgress = event.path[1].removeEventListener('mouseleave', MouseLeave, false); // DEJAMOS FIJO LA FLECHA
-                ElementListener = event.path[1];
-                if (GenerateArrow) {
-                    return;
-                }
+            if (this.task.name != '') {
+                this.bar_group.getElementsByClassName('CircleOutput')[0].addEventListener('click', (event) => {
+                    var BarProgress = event.path[1].removeEventListener('mouseleave', MouseLeave, false); // DEJAMOS FIJO LA FLECHA
+                    ElementListener = event.path[1];
+                    if (GenerateArrow) {
+                        return;
+                    }
 
-                var length_bars = GanttGeneral.bars.length; // GUARDAMOS TAMAÑO DEL ARREGLO PARA EL FOR
+                    var length_bars = GanttGeneral.bars.length; // GUARDAMOS TAMAÑO DEL ARREGLO PARA EL FOR
 
 
 
 
-                if (this.task.Father) {
-                    for (var i = 0; i < length_bars; i++) {
-                        //SOLO MOSTRAMOS LAS PADRES EN CASO DE SER TARJETAS PADRE...
-                        if (GanttGeneral.bars[i].task.id != this.task.id) {
-                            if (GanttGeneral.bars[i].task.Father) {
+                    if (this.task.Father) {
+                        for (var i = 0; i < length_bars; i++) {
+                            //SOLO MOSTRAMOS LAS PADRES EN CASO DE SER TARJETAS PADRE...
+                            if (GanttGeneral.bars[i].task.id != this.task.id) {
+                                if (GanttGeneral.bars[i].task.Father) {
 
-                                if (!GanttGeneral.bars[i].task.dependencies.includes(this.task.id) && GanttGeneral.bars[i].task.name != '' &&
-                                    !this.task.dependencies.includes(GanttGeneral.bars[i].task.id)) {
-                                    GanttGeneral.bars[i].bar_group.childNodes[0].style.opacity = 1;
-                                    GanttGeneral.bars[i].bar_group.childNodes[0].style.fill = 'red';
-                                    ArrayEncendidos.push(GanttGeneral.bars[i].bar_group.childNodes[0]);
+                                    if (!GanttGeneral.bars[i].task.dependencies.includes(this.task.id) && GanttGeneral.bars[i].task.name != '' &&
+                                        !this.task.dependencies.includes(GanttGeneral.bars[i].task.id)) {
+                                        GanttGeneral.bars[i].bar_group.childNodes[0].style.opacity = 1;
+                                        GanttGeneral.bars[i].bar_group.childNodes[0].style.fill = 'red';
+                                        ArrayEncendidos.push(GanttGeneral.bars[i].bar_group.childNodes[0]);
+
+                                    }
+
+                                }
+
+                            }
+
+                        }
+
+                    } else {
+                        for (var i = 0; i < length_bars; i++) {
+                            // SOLO MOSTRAMOS LOS HIJOS EN CASO DE SER TARJETA HIJOS...
+                            if (GanttGeneral.bars[i].task.id != this.task.id) {
+                                if (!GanttGeneral.bars[i].task.Father && GanttGeneral.bars[i].task.name != '' && !this.task.dependencies.includes(GanttGeneral.bars[i].task.id)) {
+                                    if (!GanttGeneral.bars[i].task.dependencies.includes(this.task.id)) {
+                                        GanttGeneral.bars[i].bar_group.childNodes[0].style.opacity = 1;
+                                        GanttGeneral.bars[i].bar_group.childNodes[0].style.fill = 'red';
+                                        ArrayEncendidos.push(GanttGeneral.bars[i].bar_group.childNodes[0]);
+
+                                    }
+
 
                                 }
 
@@ -866,75 +892,55 @@ var Gantt = (function() {
                         }
 
                     }
+                    /****************************ELIMINAMOS LA OPCIÓN DE LOS QUE YA ESTAN CONECTADOS A EL. ************************************/
 
-                } else {
-                    for (var i = 0; i < length_bars; i++) {
-                        // SOLO MOSTRAMOS LOS HIJOS EN CASO DE SER TARJETA HIJOS...
-                        if (GanttGeneral.bars[i].task.id != this.task.id) {
-                            if (!GanttGeneral.bars[i].task.Father && GanttGeneral.bars[i].task.name != '' && !this.task.dependencies.includes(GanttGeneral.bars[i].task.id)) {
-                                if (!GanttGeneral.bars[i].task.dependencies.includes(this.task.id)) {
-                                    GanttGeneral.bars[i].bar_group.childNodes[0].style.opacity = 1;
-                                    GanttGeneral.bars[i].bar_group.childNodes[0].style.fill = 'red';
-                                    ArrayEncendidos.push(GanttGeneral.bars[i].bar_group.childNodes[0]);
+                    var ListaDependenciasPadres = Object.keys(GanttGeneral.dependency_map); // OBTENEMOS LAS LLAVES DEL DICCIONARIO
+                    for (var i = 0; i < ListaDependenciasPadres.length; i++) {
+                        var DetectorConectorPadres = GanttGeneral.dependency_map[ListaDependenciasPadres[i]].includes(this.task.id);
+                        if (DetectorConectorPadres) {
+                            for (var b = 0; b < length_bars; b++) {
+                                // BUSCAMOS LOS PADRES ASOCIADOS Y NO LOS MOSTRAMOS...
+                                if (GanttGeneral.bars[b].task.id === ListaDependenciasPadres[i]) {
+                                    if (GanttGeneral.bars[b].bar_group.childNodes[0].style.opacity != 1) {
+                                        GanttGeneral.bars[b].bar_group.childNodes[0].style.opacity = 0;
+                                    }
+                                    //GanttGeneral.bars[b].bar_group.childNodes[0].style.opacity = 0;
+                                    GanttGeneral.bars[b].bar_group.childNodes[0].style.fill = 'black';
+
 
                                 }
+
 
 
                             }
 
                         }
-
                     }
 
-                }
-                /****************************ELIMINAMOS LA OPCIÓN DE LOS QUE YA ESTAN CONECTADOS A EL. ************************************/
 
-                var ListaDependenciasPadres = Object.keys(GanttGeneral.dependency_map); // OBTENEMOS LAS LLAVES DEL DICCIONARIO
-                for (var i = 0; i < ListaDependenciasPadres.length; i++) {
-                    var DetectorConectorPadres = GanttGeneral.dependency_map[ListaDependenciasPadres[i]].includes(this.task.id);
-                    if (DetectorConectorPadres) {
-                        for (var b = 0; b < length_bars; b++) {
-                            // BUSCAMOS LOS PADRES ASOCIADOS Y NO LOS MOSTRAMOS...
-                            if (GanttGeneral.bars[b].task.id === ListaDependenciasPadres[i]) {
-                                if (GanttGeneral.bars[b].bar_group.childNodes[0].style.opacity != 1) {
-                                    GanttGeneral.bars[b].bar_group.childNodes[0].style.opacity = 0;
-                                }
-                                //GanttGeneral.bars[b].bar_group.childNodes[0].style.opacity = 0;
-                                GanttGeneral.bars[b].bar_group.childNodes[0].style.fill = 'black';
-
-
-                            }
-
-
-
+                    /**************************************************************************** */
+                    GenerateArrow = true; // PASAMOS LA VARIABLE PARA INDICAR QUE ESTAMOS EN ESTADO PARA CREAR UNA CONEXIÓN.
+                    console.log('CONEXIÓN HABILITADA ESPERANDO NODO RECEPTOR...');
+                    CircleOutputArrow = this; // ALMACENAMOS EL ELEMENTO ASOCIADO DE LA TAREA INICIAL.
+                    this.bar_group.getElementsByClassName('CircleOutput')[0].style.fill = "red";
+                    //DESAPARECEMOS UNICAMENTE EL CIRCULO SI NO TIENE UNA CONEXIÓN PREVIA..
+                    var ListaDependencias = Object.values(GanttGeneral.dependency_map) // OBTENEMOS LA LISTA DE VALORES DEL DEPENDENCY_MAP
+                    var DetectorConector = false;
+                    for (var i = 0; i < ListaDependencias.length; i++) {
+                        DetectorConector = ListaDependencias[i].includes(this.task.id);
+                        if (DetectorConector) {
+                            break;
                         }
+                    }
+                    if (!DetectorConector) {
+                        this.bar_group.getElementsByClassName('CircleInput')[0].style.opacity = 0;
 
                     }
-                }
-
-
-                /**************************************************************************** */
-                GenerateArrow = true; // PASAMOS LA VARIABLE PARA INDICAR QUE ESTAMOS EN ESTADO PARA CREAR UNA CONEXIÓN.
-                console.log('CONEXIÓN HABILITADA ESPERANDO NODO RECEPTOR...');
-                CircleOutputArrow = this; // ALMACENAMOS EL ELEMENTO ASOCIADO DE LA TAREA INICIAL.
-                this.bar_group.getElementsByClassName('CircleOutput')[0].style.fill = "red";
-                //DESAPARECEMOS UNICAMENTE EL CIRCULO SI NO TIENE UNA CONEXIÓN PREVIA..
-                var ListaDependencias = Object.values(GanttGeneral.dependency_map) // OBTENEMOS LA LISTA DE VALORES DEL DEPENDENCY_MAP
-                var DetectorConector = false;
-                for (var i = 0; i < ListaDependencias.length; i++) {
-                    DetectorConector = ListaDependencias[i].includes(this.task.id);
-                    if (DetectorConector) {
-                        break;
-                    }
-                }
-                if (!DetectorConector) {
-                    this.bar_group.getElementsByClassName('CircleInput')[0].style.opacity = 0;
-
-                }
 
 
 
-            }, false);
+                }, false);
+            }
 
             //GENERAMOS EL LISTENER PARA LA CONEXIÓN FINAL DE CLICK PARA LA FLECHA.
             // this.bar_group.getElementsByClassName('CircleInput')[0].addEventListener('mouseover', (event) => {
