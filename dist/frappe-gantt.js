@@ -746,12 +746,10 @@ var Gantt = (function() {
                 }
                 /// SOLUCIONAR POR ACA OJOOOOOOOO
                 if (this.task.Father && this.gantt.dependency_map[this.task.id] != null | undefined) {
-                    console.log('se logro hpt 1');
                     /// MIRAMOS SI ES UN PADRE Y TIENE CONEXIONES MIRAMOS SI TAMBIEN SON PADRES O NO.
                     for (var i = 0; i < GanttGeneral.tasks.length; i++) {
-                        console.log(GanttGeneral.tasks[i].father, this.gantt.dependency_map[this.task.id].indexOf(GanttGeneral.tasks[i].id));
+                        //console.log(GanttGeneral.tasks[i].father, this.gantt.dependency_map[this.task.id].indexOf(GanttGeneral.tasks[i].id));
                         if (GanttGeneral.tasks[i].Father && this.gantt.dependency_map[this.task.id].indexOf(GanttGeneral.tasks[i].id) != -1) {
-                            console.log('se logro hpt');
                             this.bar_group.removeEventListener('mouseleave', MouseLeave, false);
                         }
 
@@ -1614,7 +1612,7 @@ var Gantt = (function() {
             this.gantt.trigger_event('date_change', [
                 this.task,
                 new_start_date,
-                date_utils.add(new_end_date, -1, 'second'),
+                date_utils.add(new_end_date, +1, 'second'), // UN CAMBIO
             ]);
         }
 
@@ -1648,7 +1646,7 @@ var Gantt = (function() {
             } else {
                 var new_end_date = date_utils.add(
                     new_start_date,
-                    width_in_units * this.gantt.options.step + 1,
+                    width_in_units * this.gantt.options.step - 1,
                     'hour'
                 );
 
