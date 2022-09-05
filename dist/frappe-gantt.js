@@ -21,6 +21,7 @@ var Gantt = (function() {
     var options = null;
     var FirstTime = true;
     var Change = false;
+    var ArrayIdFather = []; // CARGAMOS EL ID DE LOS PADRES 
 
     /********************************************************/
 
@@ -588,6 +589,7 @@ var Gantt = (function() {
             //this.draw_progress_bar();
 
             if (this.task.Father) {
+                ArrayIdFather.push(this.task.id); // GUARDAMOS LOS PADRES 
 
                 this.CircleInput = 'CircleInput father';
                 this.CircleInputTag = '.CircleInput.father';
@@ -994,10 +996,23 @@ var Gantt = (function() {
 
                     for (var i = 0; i < ArrayEncendidos.length; i++) {
                         if (ArrayEncendidos[i].task.dependencies.length == 0) {
+                            console.log('CASO 1');
                             ArrayEncendidos[i].bar_group.childNodes[0].style.opacity = 0;
                             ArrayEncendidos[i].bar_group.childNodes[0].style.fill = 'black';
                         } else {
-                            ArrayEncendidos[i].bar_group.childNodes[0].style.fill = 'black';
+                            if (ArrayEncendidos[i].task.dependencies.length == 1) {
+                                console.log('CASO 2');
+                                ArrayEncendidos[i].bar_group.childNodes[0].style.opacity = 0;
+                                ArrayEncendidos[i].bar_group.childNodes[0].style.fill = 'black';
+
+                            } else {
+                                console.log('CASO 3', );
+                                ArrayEncendidos[i].bar_group.childNodes[0].style.fill = 'black';
+
+                            }
+
+
+
 
                         }
                     }
