@@ -576,6 +576,7 @@ var Gantt = (function() {
         }
 
         draw() {
+            this.draw_progress_bar();
             this.draw_bar();
             this.draw_label();
             this.draw_resize_handles();
@@ -602,7 +603,7 @@ var Gantt = (function() {
             }
 
 
-            this.$bar = createSVG('circle', {
+            createSVG('circle', {
                 cx: this.x,
                 cy: this.y + this.height / 2,
                 r: 5,
@@ -630,8 +631,7 @@ var Gantt = (function() {
 
 
 
-
-            this.$bar = createSVG('line', {
+            createSVG('line', {
                 x1: this.x + this.width,
                 x2: this.x + this.width + 5,
                 y1: this.y + this.height / 2,
@@ -642,7 +642,7 @@ var Gantt = (function() {
 
 
 
-            this.$bar = createSVG('circle', {
+            createSVG('circle', {
                 cx: this.x + this.width + 10,
                 cy: this.y + this.height / 2,
                 r: 4,
@@ -680,7 +680,6 @@ var Gantt = (function() {
 
             /*************GENERAMOS EL LISTENER PARA LOS HANDLERS**********************/
             if (this.task.name != '') {
-                console.log('causa especial');
                 this.handle_group.addEventListener('mouseover', MouseOverHandler, false);
                 this.handle_group.addEventListener('mouseleave', MouseLeaveHandler, false);
                 this.bar_group.addEventListener('mouseover', MouseOverHandler, false);
@@ -708,12 +707,10 @@ var Gantt = (function() {
 
 
                     if (dependenciesFather == null) {
-                        console.log('CASUA 3');
                         this.bar_group.addEventListener('mouseleave', MouseLeave, false);
 
                     } else {
                         if (!dependenciesFather.includes(this.task.id)) {
-                            console.log('CASUA 4');
                             this.bar_group.addEventListener('mouseleave', MouseLeave, false);
                         } else {
 
@@ -734,7 +731,6 @@ var Gantt = (function() {
 
                             }
                             if (!VariableBandera) {
-                                console.log('CASUA 5');
                                 this.bar_group.addEventListener('mouseleave', MouseLeave, false);
                             }
 
@@ -750,7 +746,6 @@ var Gantt = (function() {
 
                     this.bar_group.addEventListener('mouseover', MouseOver, false);
                     if (GanttGeneral.dependency_map[this.task.id] == null | undefined) {
-                        console.log('CASUA 6');
                         this.bar_group.addEventListener('mouseleave', MouseLeave, false);
 
                     }
@@ -827,9 +822,7 @@ var Gantt = (function() {
                 var CircleOutput = BarProgress.getElementsByClassName('CircleOutput');
                 var Line = BarProgress.getElementsByClassName('Line');
                 //CAMBIAMOS PROPIEDADES
-                console.log(CircleOutput[0].style.fill);
                 if (CircleOutput[0].style.fill == "rgb(198, 84, 209)") {
-                    console.log('ARREGLADO PBS');
                     CircleOutput[0].style.opacity = 1;
                     Line[0].style.opacity = 1;
 
@@ -859,14 +852,11 @@ var Gantt = (function() {
             }
             if (this.task.name != '') {
                 this.bar_group.getElementsByClassName('CircleOutput')[0].addEventListener('click', (event) => {
-                    console.log('PONEMOS FIJO LA CONEXIÓN.');
                     event.path[1].removeEventListener('mouseleave', MouseLeave, false); // DEJAMOS FIJO LA FLECHA
                     console.log(event.path[1]);
-                    console.log('PONEMOS FIJO LA CONEXIÓN2.');
                     ElementListener = event.path[1];
                     if (GenerateArrow) {
                         event.path[1].removeEventListener('mouseleave', MouseLeave, false); // DEJAMOS FIJO LA FLECHA
-                        console.log('opcion 1');
                         return;
                     }
 
@@ -884,11 +874,10 @@ var Gantt = (function() {
                                     if (!GanttGeneral.bars[i].task.dependencies.includes(this.task.id) && GanttGeneral.bars[i].task.name != '' &&
                                         !this.task.dependencies.includes(GanttGeneral.bars[i].task.id)) {
 
-                                        GanttGeneral.bars[i].bar_group.childNodes[0].style.opacity = 1;
-                                        GanttGeneral.bars[i].bar_group.childNodes[0].style.fill = '#C654D1';
+                                        GanttGeneral.bars[i].bar_group.childNodes[1].style.opacity = 1;
+                                        GanttGeneral.bars[i].bar_group.childNodes[1].style.fill = '#C654D1';
                                         ArrayEncendidos.push(GanttGeneral.bars[i]);
                                         ArrayIdConectorStart.push(GanttGeneral.bars[i].task.id);
-                                        //console.log(GanttGeneral.bars[i]);
 
                                     }
 
@@ -904,11 +893,10 @@ var Gantt = (function() {
                             if (GanttGeneral.bars[i].task.id != this.task.id) {
                                 if (!GanttGeneral.bars[i].task.Father && GanttGeneral.bars[i].task.name != '' && !this.task.dependencies.includes(GanttGeneral.bars[i].task.id)) {
                                     if (!GanttGeneral.bars[i].task.dependencies.includes(this.task.id)) {
-                                        GanttGeneral.bars[i].bar_group.childNodes[0].style.opacity = 1;
-                                        GanttGeneral.bars[i].bar_group.childNodes[0].style.fill = '#C654D1';
+                                        GanttGeneral.bars[i].bar_group.childNodes[1].style.opacity = 1;
+                                        GanttGeneral.bars[i].bar_group.childNodes[1].style.fill = '#C654D1';
                                         ArrayEncendidos.push(GanttGeneral.bars[i]);
                                         ArrayIdConectorStart.push(GanttGeneral.bars[i].task.id); // AGREGAMOS LOS ID DE LOS PADRES
-                                        //console.log(GanttGeneral.bars[i].bar_group);
 
                                     }
 
@@ -929,11 +917,11 @@ var Gantt = (function() {
                             for (var b = 0; b < length_bars; b++) {
                                 // BUSCAMOS LOS PADRES ASOCIADOS Y NO LOS MOSTRAMOS...
                                 if (GanttGeneral.bars[b].task.id === ListaDependenciasPadres[i]) {
-                                    if (GanttGeneral.bars[b].bar_group.childNodes[0].style.opacity != 1) {
-                                        GanttGeneral.bars[b].bar_group.childNodes[0].style.opacity = 0;
+                                    if (GanttGeneral.bars[b].bar_group.childNodes[1].style.opacity != 1) {
+                                        GanttGeneral.bars[b].bar_group.childNodes[1].style.opacity = 0;
                                     }
                                     //GanttGeneral.bars[b].bar_group.childNodes[0].style.opacity = 0;
-                                    GanttGeneral.bars[b].bar_group.childNodes[0].style.fill = 'black';
+                                    GanttGeneral.bars[b].bar_group.childNodes[1].style.fill = 'black';
 
 
 
@@ -949,7 +937,6 @@ var Gantt = (function() {
                     if (ArrayEncendidos.length == 0) {
                         alert('No tiene nodos de conexion permitidos...');
                         GenerateArrow = false;
-                        console.log('entro 1');
                         this.bar_group.getElementsByClassName('CircleOutput')[0].style.fill = "black";
                         this.bar_group.getElementsByClassName('CircleOutput')[0].style.opacity = 0;
                         this.bar_group.getElementsByClassName('Line')[0].style.opacity = 0;
@@ -999,18 +986,15 @@ var Gantt = (function() {
 
                     for (var i = 0; i < ArrayEncendidos.length; i++) {
                         if (ArrayEncendidos[i].task.dependencies.length == 0) {
-                            console.log('CASO 1');
-                            ArrayEncendidos[i].bar_group.childNodes[0].style.opacity = 0;
-                            ArrayEncendidos[i].bar_group.childNodes[0].style.fill = 'black';
+                            ArrayEncendidos[i].bar_group.childNodes[1].style.opacity = 0;
+                            ArrayEncendidos[i].bar_group.childNodes[1].style.fill = 'black';
                         } else {
                             if (ArrayEncendidos[i].task.dependencies.length == 1) {
-                                console.log('CASO 2');
-                                ArrayEncendidos[i].bar_group.childNodes[0].style.opacity = 0;
-                                ArrayEncendidos[i].bar_group.childNodes[0].style.fill = 'black';
+                                ArrayEncendidos[i].bar_group.childNodes[1].style.opacity = 0;
+                                ArrayEncendidos[i].bar_group.childNodes[1].style.fill = 'black';
 
                             } else {
-                                console.log('CASO 3', );
-                                ArrayEncendidos[i].bar_group.childNodes[0].style.fill = 'black';
+                                ArrayEncendidos[i].bar_group.childNodes[1].style.fill = 'black';
 
                             }
 
@@ -1024,13 +1008,12 @@ var Gantt = (function() {
 
                     if (!CircleOutputArrow.task.Father) {
                         //SI ES UN HIJO Y TIENE ALGUNA CONEXIÓN DEJO LOS MARCADORES
-                        console.log('CASUA 1');
                         if (Object.keys(GanttGeneral.dependency_map).includes(CircleOutputArrow.task.id) == false) {
                             //SI NO EXISTE CONEXIÓN
+                            CircleOutputArrow.bar_group.childNodes[3].style.opacity = 0;
+                            CircleOutputArrow.bar_group.childNodes[3].style.fill = 'black';
                             CircleOutputArrow.bar_group.childNodes[2].style.opacity = 0;
                             CircleOutputArrow.bar_group.childNodes[2].style.fill = 'black';
-                            CircleOutputArrow.bar_group.childNodes[1].style.opacity = 0;
-                            CircleOutputArrow.bar_group.childNodes[1].style.fill = 'black';
                             CircleOutputArrow.bar_group.addEventListener('mouseleave', MouseLeave);
 
                         };
@@ -1050,12 +1033,11 @@ var Gantt = (function() {
                         }
                         if (!DejarEstado) {
 
+                            CircleOutputArrow.bar_group.childNodes[3].style.opacity = 0;
+                            CircleOutputArrow.bar_group.childNodes[3].style.fill = 'black';
                             CircleOutputArrow.bar_group.childNodes[2].style.opacity = 0;
                             CircleOutputArrow.bar_group.childNodes[2].style.fill = 'black';
-                            CircleOutputArrow.bar_group.childNodes[1].style.opacity = 0;
-                            CircleOutputArrow.bar_group.childNodes[1].style.fill = 'black';
                             CircleOutputArrow.bar_group.addEventListener('mouseleave', MouseLeave);
-                            console.log('CASUA 2');
 
 
                         }
@@ -1133,13 +1115,12 @@ var Gantt = (function() {
         draw_progress_bar() {
             if (this.invalid) return;
 
-            this.$bar = createSVG('image', {
-                href: 'dist/Imag/Grupo359.png',
-                class: 'delete',
-                x: this.x - 14, // YA QUE NO PODEMOS OBTENERLA DESDE AQUI LA CUADRAMOS ABAJO EN EL RESETEO
+            createSVG('rect', {
+                class: 'extend',
+                x: this.x + this.width, // YA QUE NO PODEMOS OBTENERLA DESDE AQUI LA CUADRAMOS ABAJO EN EL RESETEO
                 y: this.y,
-                width: 9,
-                height: 9,
+                width: 30,
+                height: this.height,
                 append_to: this.bar_group,
             });
 
@@ -1204,7 +1185,7 @@ var Gantt = (function() {
                         //GanttGeneral.bars[0].bar_group.task.name=''
                         for (var i = 0; i < GanttGeneral.tasks.length; i++) {
 
-                            var Input = GanttGeneral.bars[i].bar_group.childNodes[4].childNodes[0]
+                            var Input = GanttGeneral.bars[i].bar_group.childNodes[5].childNodes[0]
                             if (Input == event.path[0]) {
 
                                 GanttGeneral.bars[i].task.name = event.path[0].value; // REEMPLAZAMOS EL NOMBRE
@@ -1943,7 +1924,10 @@ var Gantt = (function() {
                 label = this.group.querySelector(this.ClassName), //OBTENEMOS EL ANCHO ACTUAL DE LA CAJA
                 label_2 = this.group.querySelector(this.ClassDate), // OBTENEMOS EL OBJETO HTML DEL TEXTO DE FECHA
                 label_3 = this.group.querySelector('.bar-label.dateImage'),
-                label_4 = this.group.querySelector(this.ClassBig)
+                label_4 = this.group.querySelector(this.ClassBig),
+                extend = this.group.querySelector('.extend')
+
+            extend.setAttribute('x', bar.getX() + bar.getWidth());
             if (label.getBBox().width >= bar.getWidth() - 40) {
 
                 /* RESPONSIVE PARA EL TITULO DEL PROYECTO Y EL BOTON DE INFO */
@@ -2081,9 +2065,9 @@ var Gantt = (function() {
         generateConector() {
 
 
-            var CircleOutput = this.from_task.bar_group.childNodes[2];
-            var CircleInput = this.to_task.bar_group.childNodes[0];
-            var Line = this.from_task.bar_group.childNodes[1];
+            var CircleOutput = this.from_task.bar_group.childNodes[3];
+            var CircleInput = this.to_task.bar_group.childNodes[1];
+            var Line = this.from_task.bar_group.childNodes[2];
             CircleOutput.style.opacity = 1;
             Line.style.opacity = 1;
             CircleInput.style.opacity = 1;

@@ -113,7 +113,8 @@
 }
 
 .extend {
-    opacity: 0 !important;
+    opacity: 0;
+    fill: red
 }
 
 
