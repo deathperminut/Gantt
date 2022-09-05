@@ -827,7 +827,8 @@ var Gantt = (function() {
                 var CircleOutput = BarProgress.getElementsByClassName('CircleOutput');
                 var Line = BarProgress.getElementsByClassName('Line');
                 //CAMBIAMOS PROPIEDADES
-                if (CircleOutput[0].style.fill == "red") {
+                console.log(CircleOutput[0].style.fill);
+                if (CircleOutput[0].style.fill == "rgb(198, 84, 209)") {
                     console.log('ARREGLADO PBS');
                     CircleOutput[0].style.opacity = 1;
                     Line[0].style.opacity = 1;
@@ -884,7 +885,7 @@ var Gantt = (function() {
                                         !this.task.dependencies.includes(GanttGeneral.bars[i].task.id)) {
 
                                         GanttGeneral.bars[i].bar_group.childNodes[0].style.opacity = 1;
-                                        GanttGeneral.bars[i].bar_group.childNodes[0].style.fill = 'red';
+                                        GanttGeneral.bars[i].bar_group.childNodes[0].style.fill = '#C654D1';
                                         ArrayEncendidos.push(GanttGeneral.bars[i]);
                                         ArrayIdConectorStart.push(GanttGeneral.bars[i].task.id);
                                         //console.log(GanttGeneral.bars[i]);
@@ -904,7 +905,7 @@ var Gantt = (function() {
                                 if (!GanttGeneral.bars[i].task.Father && GanttGeneral.bars[i].task.name != '' && !this.task.dependencies.includes(GanttGeneral.bars[i].task.id)) {
                                     if (!GanttGeneral.bars[i].task.dependencies.includes(this.task.id)) {
                                         GanttGeneral.bars[i].bar_group.childNodes[0].style.opacity = 1;
-                                        GanttGeneral.bars[i].bar_group.childNodes[0].style.fill = 'red';
+                                        GanttGeneral.bars[i].bar_group.childNodes[0].style.fill = '#C654D1';
                                         ArrayEncendidos.push(GanttGeneral.bars[i]);
                                         ArrayIdConectorStart.push(GanttGeneral.bars[i].task.id); // AGREGAMOS LOS ID DE LOS PADRES
                                         //console.log(GanttGeneral.bars[i].bar_group);
@@ -960,7 +961,7 @@ var Gantt = (function() {
                         GenerateArrow = true; // PASAMOS LA VARIABLE PARA INDICAR QUE ESTAMOS EN ESTADO PARA CREAR UNA CONEXIÓN.
                         console.log('CONEXIÓN HABILITADA ESPERANDO NODO RECEPTOR...');
                         CircleOutputArrow = this; // ALMACENAMOS EL ELEMENTO ASOCIADO DE LA TAREA INICIAL.
-                        this.bar_group.getElementsByClassName('CircleOutput')[0].style.fill = "red";
+                        this.bar_group.getElementsByClassName('CircleOutput')[0].style.fill = "#C654D1";
                         //DESAPARECEMOS UNICAMENTE EL CIRCULO SI NO TIENE UNA CONEXIÓN PREVIA..
                         var ListaDependencias = Object.values(GanttGeneral.dependency_map) // OBTENEMOS LA LISTA DE VALORES DEL DEPENDENCY_MAP
                         var DetectorConector = false;
