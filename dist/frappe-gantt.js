@@ -22,6 +22,7 @@ var Gantt = (function() {
     var FirstTime = true;
     var Change = false;
     var ArrayIdFather = []; // CARGAMOS EL ID DE LOS PADRES 
+    var ArrayIdConectorStart = []; // ARREGLO PARA GUARDAR LOS ID DE LAS TAREAS INICIALES DE LA CONEXION
 
     /********************************************************/
 
@@ -884,8 +885,8 @@ var Gantt = (function() {
 
                                         GanttGeneral.bars[i].bar_group.childNodes[0].style.opacity = 1;
                                         GanttGeneral.bars[i].bar_group.childNodes[0].style.fill = 'red';
-                                        //ArrayEncendidos.push(GanttGeneral.bars[i].bar_group.childNodes[0]);
                                         ArrayEncendidos.push(GanttGeneral.bars[i]);
+                                        ArrayIdConectorStart.push(GanttGeneral.bars[i].task.id);
                                         //console.log(GanttGeneral.bars[i]);
 
                                     }
@@ -905,6 +906,7 @@ var Gantt = (function() {
                                         GanttGeneral.bars[i].bar_group.childNodes[0].style.opacity = 1;
                                         GanttGeneral.bars[i].bar_group.childNodes[0].style.fill = 'red';
                                         ArrayEncendidos.push(GanttGeneral.bars[i]);
+                                        ArrayIdConectorStart.push(GanttGeneral.bars[i].task.id); // AGREGAMOS LOS ID DE LOS PADRES
                                         //console.log(GanttGeneral.bars[i].bar_group);
 
                                     }
@@ -1017,6 +1019,7 @@ var Gantt = (function() {
                         }
                     }
                     ArrayEncendidos = []; // VACIAMOS EL ARREGLO
+                    ArrayIdConectorStart = [];
 
                     if (!CircleOutputArrow.task.Father) {
                         //SI ES UN HIJO Y TIENE ALGUNA CONEXIÓN DEJO LOS MARCADORES
@@ -1072,9 +1075,13 @@ var Gantt = (function() {
 
 
             this.bar_group.getElementsByClassName('CircleInput')[0].addEventListener('click', (event) => {
+                if (!ArrayIdConectorStart.includes(this.task.id)) {
+                    return;
+                }
                 if (GenerateArrow) {
                     console.log('CONECTADA');
                     ArrayEncendidos = []; // VACIAMOS EL ARREGLO
+                    ArrayIdConectorStart = [];
                     CircleOutputArrow.bar_group.getElementsByClassName('CircleOutput')[0].style.fill = "#000";
                     /* GENERAMOS LA CONEXIÓN EN LOS DATOS */
 
