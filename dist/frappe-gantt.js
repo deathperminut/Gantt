@@ -1560,6 +1560,10 @@ var Gantt = (function() {
         }
 
         update_bar_position({ x = null, width = null }) {
+            if (this.task.name == '') {
+                // INHABILITAMOS EL MOVIMIENTO PARA LOS CASOS DONDE NO SE LLENE LOS CAMPOS DE LA TAREA PRIMERO.
+                return;
+            }
             const bar = this.$bar;
             if (x) {
                 // get all x values of parent task
@@ -2145,7 +2149,7 @@ var Gantt = (function() {
             });
 
             this.element.addEventListener('mouseover', (event) => {
-                    this.element.style.stroke = 'red';
+                    this.element.style.stroke = '#DE9BE8';
                     this.to_task.handle_group.childNodes[2].style.visibility = 'visible';
                     this.to_task.handle_group.childNodes[2].setAttribute('x', this.crossPositionX);
                     this.to_task.handle_group.childNodes[2].setAttribute('y', this.crossPositiony);
