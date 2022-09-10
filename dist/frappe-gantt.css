@@ -236,14 +236,19 @@
 
 .gantt .bar-label.BigCase {
     visibility: hidden;
-    font-size: 20px;
+    fill: #e9e6e6 !important;
+    font-size: 20px !important;
+    text-anchor: start !important;
+    dominant-baseline: initial !important;
     /*INICIALMENTE OCULTO Y SIN OCUPAR ESPACIO EN HTML*/
 }
 
 .gantt .bar-label.BigCaseSon {
     visibility: hidden;
-    font-size: 20px;
-    fill: black;
+    fill: black !important;
+    font-size: 20px !important;
+    text-anchor: start !important;
+    dominant-baseline: initial !important;
     /*INICIALMENTE OCULTO Y SIN OCUPAR ESPACIO EN HTML*/
 }
 

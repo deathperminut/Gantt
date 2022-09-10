@@ -343,6 +343,9 @@ var Gantt = (function() {
         }
     }
 
+
+    /// HASTA AQUI TODO CORRECTO//////////
+
     function $(expr, con) {
         return typeof expr === 'string' ?
             (con || document).querySelector(expr) :
@@ -491,6 +494,8 @@ var Gantt = (function() {
 
         element.setAttribute(attr, value);
     };
+
+    ///////////////////// HASTA AQUI TODO CORRECTOOO /////////////////////////
 
     class Bar {
         constructor(gantt, task) {
@@ -1862,16 +1867,6 @@ var Gantt = (function() {
                 TaskButton.classList.remove('big');
             }
 
-
-
-
-
-
-
-
-
-
-
         }
         update_label_position_null() {
 
@@ -2191,7 +2186,81 @@ var Gantt = (function() {
                         }
                     }
                 }
-                //GanttGeneral.make_arrow_update();
+
+
+                // AHORA DESACTIVAMOS EL NODO DE INPUT SI NO TIENEN NINGUNA OTRA DEPENDENCIA.
+                // DESACTIVAMOS LA SEÑAL DE X SI O SI.
+                // DESACTIVAMOS EL NODO DE SALIDA DEL PADRE EN CASO DE QUE NO SEA PADRE DE OTRA PADRE.
+                var ArrayFathers = [];
+                for (var i = 0; i < GanttGeneral.tasks.length; i++) {
+
+
+                    /// PARA LOS PADRES ////////
+                    if (GanttGeneral.bars[i].task.Father) {
+                        ArrayFathers.push(GanttGeneral.bars[i].task.id); // GUARDAMOS LOS PADRES
+                    }
+                }
+                for (var i = 0; i < GanttGeneral.tasks.length; i++) {
+
+                    if (GanttGeneral.bars[i].task.id != null | '' && GanttGeneral.bars[i].task.id == this.to_task.task.id && GanttGeneral.bars[i].task.Father && GanttGeneral.bars[i].task.dependencies.length == 0) {
+                        // ELIMINAMOS LOS NODOS CONECTORES DE LOS PADRES JUNTO A LA CRUZ EN CASO DE QUE SEA UN PADRE SIN DEPENDENCIAS
+                        GanttGeneral.bars[i].handle_group.childNodes[2].style.visibility = 'hidden';
+                        GanttGeneral.bars[i].bar_group.childNodes[1].style.opacity = 0;
+                    }
+
+
+                    if (GanttGeneral.bars[i].task.id == this.from_task.task.id && GanttGeneral.bars[i].task.Father) {
+                        var CF = false;
+                        /// MIRAMOS SI LAS DEPENDENCIAS_MAP DEL PADRE TIENE ALGUN PADRE UNIDO A ALGUN PADRE
+                        for (var j = 0; j < GanttGeneral.dependency_map[this.from_task.task.id].length; j++) {
+
+                            if (ArrayFathers.includes(GanttGeneral.dependency_map[this.from_task.task.id][j])) {
+                                console.log()
+
+                                CF = true;
+                                break;
+                            }
+
+                        }
+                        if (!CF) {
+                            console.log('ESTE ES EL HPT');
+                            GanttGeneral.bars[i].bar_group.childNodes[2].style.opacity = 0;
+                            GanttGeneral.bars[i].bar_group.childNodes[3].style.opacity = 0;
+                            GanttGeneral.bars[i].bar_group.addEventListener('mouseleave', MouseLeave, false);
+
+                        }
+
+                    }
+
+                    /// PARA LAS HIJAS //////
+                    if (GanttGeneral.bars[i].task.id == this.from_task.task.id && GanttGeneral.dependency_map[this.from_task.task.id].length == 0 && !GanttGeneral.bars[i].task.Father) {
+                        GanttGeneral.bars[i].bar_group.childNodes[2].style.opacity = 0;
+                        GanttGeneral.bars[i].bar_group.childNodes[3].style.opacity = 0;
+                        GanttGeneral.bars[i].bar_group.addEventListener('mouseleave', MouseLeave, false);
+                    }
+
+                    if (GanttGeneral.bars[i].task.id == this.to_task.task.id && !GanttGeneral.bars[i].task.Father && GanttGeneral.bars[i].task.dependencies.length == 1) {
+                        // ELIMINAMOS LOS NODOS CONECTORES DE LOS PADRES JUNTO A LA CRUZ EN CASO DE QUE SEA UN PADRE SIN DEPENDENCIAS
+                        GanttGeneral.bars[i].handle_group.childNodes[2].style.visibility = 'hidden';
+                        GanttGeneral.bars[i].bar_group.childNodes[1].style.opacity = 0;
+                    }
+
+
+
+
+                }
+                ///ELIMINAMOS EL PATH DEL GANTT////////////////////////////
+                for (var i = 0; i < GanttGeneral.layers.arrow.childNodes.length; i++) {
+
+
+                    if (GanttGeneral.layers.arrow.childNodes[i].dataset['from'] == this.from_task.task.id && GanttGeneral.layers.arrow.childNodes[i].dataset['to'] == this.to_task.task.id) {
+
+                        GanttGeneral.layers.arrow.childNodes[i].remove()
+                    }
+
+                }
+                //////////////////////////////////////////////////////////
+
                 GanttGeneral.setup_tasks(GanttGeneral.tasks);
                 //GanttGeneral.render();
                 // initializ with default view mode

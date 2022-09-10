@@ -294,20 +294,29 @@ export default class Gantt {
     }
 
     make_grid() {
-        this.make_grid_background();
-        this.make_grid_rows();
-        this.make_grid_header();
-        this.make_grid_ticks();
-        this.make_grid_highlights();
+        this.make_grid_background(); // CORREGIDO PARA GENERAR MALLA
+        this.make_grid_rows(); // CORREGIDO PARA GENERAR MALLA
+        this.make_grid_header(); // NO SE DEBERIA TOCAR PARA GENERAR MALLA
+        this.make_grid_ticks(); // CORREGIDO PARA GENERAR MALLA
+        this.make_grid_highlights(); // SOMBREADO FALTA
     }
 
     make_grid_background() {
         const grid_width = this.dates.length * this.options.column_width;
+        if (this.tasks.length < 10) {
+            length = 10;
+        } else {
+            length = this.tasks.length;
+        }
         const grid_height =
             this.options.header_height +
             this.options.padding +
             (this.options.bar_height + this.options.padding) *
+<<<<<<< HEAD
                 this.tasks.length;
+=======
+            length;
+>>>>>>> 9fc1482 (SE EDITAN LOS ARCHIVOS SRC PARA SUBIR A NPM...:D)
 
         createSVG('rect', {
             x: 0,
@@ -324,7 +333,12 @@ export default class Gantt {
         });
     }
 
+<<<<<<< HEAD
     make_grid_rows() {
+=======
+    make_grid_rows(TaskFather = null) {
+
+>>>>>>> 9fc1482 (SE EDITAN LOS ARCHIVOS SRC PARA SUBIR A NPM...:D)
         const rows_layer = createSVG('g', { append_to: this.layers.grid });
         const lines_layer = createSVG('g', { append_to: this.layers.grid });
 
@@ -333,7 +347,15 @@ export default class Gantt {
 
         let row_y = this.options.header_height + this.options.padding / 2;
 
+<<<<<<< HEAD
         for (let task of this.tasks) {
+=======
+        var count = 0; // INICIALIZAMOS UN CONTADOR PARA CUADRAR UNA GRILLA POR DEFAULT.
+
+
+        for (let task of this.tasks) {
+            count += 1;
+>>>>>>> 9fc1482 (SE EDITAN LOS ARCHIVOS SRC PARA SUBIR A NPM...:D)
             createSVG('rect', {
                 x: 0,
                 y: row_y,
@@ -352,7 +374,43 @@ export default class Gantt {
                 append_to: lines_layer,
             });
 
+<<<<<<< HEAD
             row_y += this.options.bar_height + this.options.padding;
+=======
+
+            row_y += this.options.bar_height + this.options.padding;
+        }
+
+        if (count < 10) {
+
+            var Rest = 10 - count;
+            for (var i = 0; i < Rest; i++) {
+                createSVG('rect', {
+                    x: 0,
+                    y: row_y,
+                    width: row_width,
+                    height: row_height,
+                    class: 'grid-row',
+                    append_to: rows_layer,
+                });
+
+                createSVG('line', {
+                    x1: 0,
+                    y1: row_y + row_height,
+                    x2: row_width,
+                    y2: row_y + row_height,
+                    class: 'row-line',
+                    append_to: lines_layer,
+                });
+
+
+                row_y += this.options.bar_height + this.options.padding;
+
+            }
+
+
+
+>>>>>>> 9fc1482 (SE EDITAN LOS ARCHIVOS SRC PARA SUBIR A NPM...:D)
         }
     }
 
@@ -372,9 +430,14 @@ export default class Gantt {
     make_grid_ticks() {
         let tick_x = 0;
         let tick_y = this.options.header_height + this.options.padding / 2;
+        if (this.tasks.length < 10) {
+            length = 10;
+        } else {
+            length = this.tasks.length
+        }
         let tick_height =
             (this.options.bar_height + this.options.padding) *
-            this.tasks.length;
+            length;
 
         for (let date of this.dates) {
             let tick_class = 'tick';
@@ -425,9 +488,18 @@ export default class Gantt {
             const y = 0;
 
             const width = this.options.column_width;
+            if (this.tasks.length < 10) {
+                length = 10;
+            } else {
+                length = this.tasks.length;
+            }
             const height =
                 (this.options.bar_height + this.options.padding) *
+<<<<<<< HEAD
                     this.tasks.length +
+=======
+                length +
+>>>>>>> 9fc1482 (SE EDITAN LOS ARCHIVOS SRC PARA SUBIR A NPM...:D)
                 this.options.header_height +
                 this.options.padding / 2;
 
