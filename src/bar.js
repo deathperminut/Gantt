@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-import date_utils from './date_utils';
-import { $, createSVG, animateSVG } from './svg_utils';
-//CREAMOS LA CLASE BAR PARA GENERAR LOS LABELS
-=======
 import date_utils from './date_utils.js';
 import FirstTime from './index.js';
 //import MouseLeave from './index.js';
@@ -39,63 +34,70 @@ function MouseLeave(event) {
 
 }
 //////////////////////////
->>>>>>> 9fc1482 (SE EDITAN LOS ARCHIVOS SRC PARA SUBIR A NPM...:D)
 export default class Bar {
     constructor(gantt, task) {
-        //RECIBE COMO PARAMETROS LAS TAREAS Y EL GANTT
-        this.set_defaults(gantt, task); //FUNCIÓN QUE INICIALIZA COMO ATRIBUTOS LA TAREA Y EL GANTT
-        this.prepare(); // PREPARA LOS ATRIBUTOS PARA PONER LAS UBICACIONES EN EL SVG
-        this.draw(); // GENERA LOS VECTORES PARA EL SVG
+        GanttGeneral = gantt;
+        this.set_defaults(gantt, task);
+        this.prepare();
+        this.draw();
         this.bind();
     }
 
     set_defaults(gantt, task) {
         this.action_completed = false;
         this.gantt = gantt;
-        this.task = task; // SETEAMOS LOS ATRIBUTOS DE LA TAREA
+        this.task = task;
     }
 
     prepare() {
-        this.prepare_values(); // PREPARAMOS LAS VARIABLES DE POSICIÓN
+        this.prepare_values();
         this.prepare_helpers();
     }
 
     prepare_values() {
-        this.invalid = this.task.invalid; // MIRAR FUNCIONALIDAD***
-        this.height = this.gantt.options.bar_height; // DEFINIMOS LA ALTURA DEL LABEL PRINCIPAL POR EL TIEMPO
-        this.x = this.compute_x(); // CALCULAMOS LA POSICIÓN INICAL EN X
-        this.y = this.compute_y(); // CALCULAMOS LA POSICIÓN INICIAL EN Y
-        this.corner_radius = this.gantt.options.bar_corner_radius; // ME DEFINE EL RADIO DE LOS BORDES PARA EL PRINCIPAL
-        this.duration =
-            date_utils.diff(this.task._end, this.task._start, 'hour') /
-            this.gantt.options.step; // DEFINIMOS LA DURACIÓN DE LA TAREA SEGUN EL TIEMPO
-        this.width = this.gantt.options.column_width * this.duration; //DEPENDIENDO DEL ANCHO ENVIADO SE MULTIPLICA POR LA DURACIÓN EN TIEMPO CALCULADA
+        /* VALORES PARA MOVILIDAD */
+        this.CircleInput = '';
+        this.CircleInputTag = '';
+        this.Line = '';
+        this.LineTag = '';
+        this.CircleOutput = '';
+        this.CircleOutputTag = '';
+        /*************************** */
+        this.invalid = this.task.invalid;
+        this.height = this.gantt.options.bar_height;
+        this.x = this.compute_x();
+        this.y = this.compute_y();
+        this.corner_radius = this.gantt.options.bar_corner_radius;
+        if (FirstTime || !Change) {
+            this.duration =
+                date_utils.diff(this.task._end, this.task._start, 'hour') /
+                this.gantt.options.step;
+        } else {
+            this.duration =
+                date_utils.diff(this.task._end, this.task._start, 'hour') /
+                this.gantt.options.step;
+
+        }
+
+        this.width = this.gantt.options.column_width * this.duration;
         this.progress_width =
             this.gantt.options.column_width *
             this.duration *
-            (this.task.progress / 100) || 0; // SE CALCULA EL ANCHO DE LA BARRA DE PROGRESO
+            (100 / 100) || 0; //this.task.progress
         this.group = createSVG('g', {
             class: 'bar-wrapper ' + (this.task.custom_class || ''),
             'data-id': this.task.id,
-        }); // BAR-WRAPPER RESULTA SER EL CONTENEDOR DE LOS LABELS Y CONTENEDOR DE LOS EXTREMOS
+        });
+
         this.bar_group = createSVG('g', {
             class: 'bar-group',
             append_to: this.group,
-        }); // CONTENEDOR UNICO DE LOS LABELS-PROGRESS BAR-TEXT
+        });
         this.handle_group = createSVG('g', {
             class: 'handle-group',
             append_to: this.group,
-        }); //CONTENEDOR DE LOS EXTREMOS
-        this.handle_boton = createSVG("g", {
-            class: "handle-group",
-            append_to: this.group,
-        });
-        //CONTENEDOR DEL BOTON ASOCIADO.
-        this.handle_person = createSVG("g", {
-            class: "handle-person",
-            append_to: this.group,
-            //CONTENEDOR PARA LA IMAGEN DE UNO DE LOS MIEMBROS DEL EQUIPO
-        })
+
+        }); // SE CREA EL ELEMENTO PARA AGREGAR LOS HANDLE
     }
 
     prepare_helpers() {
@@ -117,47 +119,104 @@ export default class Bar {
     }
 
     draw() {
-        this.draw_bar(); // FUNCIÓN PARA DIBUJAR EL LABEL PRINCIPAL
-        this.draw_progress_bar(); // FUNCIÓN PARA DIBUJAR LA BARRA DE PROGRESO ASOCIADA AL LABEL
-        this.draw_label(); // FUNCIÓN PARA DIBUJAR EL TEXTO
-        this.draw_resize_handles(); // FUNCIÓN PARA DIBUJAR LOS EXTREMOS DE CADA LABEL
-        //this.draw_boton(); // DIBUJAMOS EL BOTON ASOCIADO AL LABEL PARA AGREGAR TAREAS
-        //this.draw_imag(); // DIBUJAMOS LA IMAGEN DE UN INTEGRANTE.
-    }
-    draw_boton() {
-        const bar = this.$bar; // OBTENEMOS LAS CARACTERISTICAS DE LA BARRA.
-        const ButtonHeight = this.height * 1.3; // DEFINIMOS LA ALTURA DEL BUTTON.
-        const ButtonWidth = this.width / 3 //PEQUEÑO
-            //GENERAMOS EL boton
-        createSVG('rect', {
-            x: bar.getX() + this.width * 0.6, //DEFINIMOS LA POSICIÓN EN X DEL LADO IZQUIERDO
-            y: bar.getY() - 5, // DEFINIMOS LA POSICIÓN EN Y.
-            width: ButtonWidth, // ANCHO DEFINIDO ARRIBA
-            height: ButtonHeight, // ALTURA DEFINIDA ARRIBA
-            rx: this.corner_radius, // MISMO RADIO
-            ry: this.corner_radius, // MISMO RADIO
-            class: 'Boton-Update', // CLASE PARA MODIFICAR EL BOTON
-            append_to: this.bar_group, // LO PONEMOS EN EL CONTENEDOR DE HANDLE
-        });
+        this.draw_progress_bar();
+        this.draw_bar();
+        this.draw_label();
+        this.draw_resize_handles();
     }
 
     draw_bar() {
-        // DIBUJAMOS EL LABEL PRINCIPAL COMO RECT DE UN SVG
-        this.$bar = createSVG('rect', {
-            x: this.x, // OBTENEMOS LA POSICIÓN EN X DEL LABEL INICIAL
-            y: this.y, // OBTENEMOS LA POSICIÓN EN Y DEL LABEL INICIAL
-            width: this.width, // DEFINIMOS EL ANCHO REQUERIDO
-            height: this.height, // DEFINIMOS EL ALTO RQUERIDO
-            rx: this.corner_radius, // DEFINIMOS LA CURVATURA EN X E Y 
-            ry: this.corner_radius,
-            class: 'bar', // LE ASOCIAMOS UNA CLASE DE BAR PARA EDITARLA 
-            append_to: this.bar_group, // AQUI SE AGREGA AL CONTENEDOR BAR_GROUP
+
+
+
+
+        /*CREAMOS EL LIENZO PARA LOS CIRCULOS DE CONEXIÓN*/
+        //this.draw_progress_bar();
+
+        if (this.task.Father) {
+            ArrayIdFather.push(this.task.id); // GUARDAMOS LOS PADRES 
+
+            this.CircleInput = 'CircleInput father';
+            this.CircleInputTag = '.CircleInput.father';
+
+
+        } else {
+            this.CircleInput = 'CircleInput son';
+            this.CircleInputTag = '.CircleInput.son';
+        }
+
+
+        createSVG('circle', {
+            cx: this.x,
+            cy: this.y + this.height / 2,
+            r: 5,
+            class: this.CircleInput,
+            append_to: this.bar_group,
         });
 
-<<<<<<< HEAD
-        animateSVG(this.$bar, 'width', 0, this.width);
-        ///CREADO EL ELEMENTO LE ASOCIAMOS UNA ANIMACIÓN EN CUANTO A ANCHO
-=======
+
+
+
+        if (this.task.Father) {
+
+            this.CircleOutputTag = '.CircleOutput.father';
+            this.CircleOutput = 'CircleOutput father';
+            this.Line = 'Line father';
+            this.LineTag = '.Line.father';
+
+
+        } else {
+            this.CircleOutput = 'CircleOutput son';
+            this.CircleOutputTag = '.CircleOutput.son';
+            this.Line = 'Line son';
+            this.LineTag = '.Line.son';
+        }
+
+
+
+        createSVG('line', {
+            x1: this.x + this.width,
+            x2: this.x + this.width + 5,
+            y1: this.y + this.height / 2,
+            y2: this.y + this.height / 2,
+            class: this.Line,
+            append_to: this.bar_group,
+        });
+
+
+
+        createSVG('circle', {
+            cx: this.x + this.width + 10,
+            cy: this.y + this.height / 2,
+            r: 4,
+            class: this.CircleOutput,
+            append_to: this.bar_group,
+        });
+
+
+
+
+
+        var name_class;
+        if (this.task.Father) {
+
+            name_class = 'bar father';
+
+        } else {
+            name_class = 'bar son';
+        }
+
+        this.$bar = createSVG('rect', {
+            x: this.x,
+            y: this.y,
+            width: this.width,
+            height: this.height,
+            rx: this.corner_radius,
+            ry: this.corner_radius,
+            class: name_class,
+            append_to: this.bar_group,
+        });
+
         /*************GENERAMOS EL LISTENER PARA LOS HANDLERS**********************/
         if (this.task.name != '') {
             this.handle_group.addEventListener('mouseover', MouseOverHandler, false);
@@ -610,46 +669,29 @@ export default class Bar {
         }, false);
         /**********************************************************************************/
 
->>>>>>> 9fc1482 (SE EDITAN LOS ARCHIVOS SRC PARA SUBIR A NPM...:D)
 
         if (this.invalid) {
-            this.$bar.classList.add('bar-invalid'); // SI UBICAMOS INVALID NO SE MOVERA EL ANCHO
+            this.$bar.classList.add('bar-invalid');
         }
     }
 
     draw_progress_bar() {
-        if (this.invalid) return; // SI DEFINIMOS EL PARAMETRO INVALID NO TENDRA BARRA DE PROGRESO 
-        // CREAMOS LA BARRA DE PROGRESO DE LA MISMA MANERA QUE EL LABEL PRINCIPAL
-        this.$bar_progress = createSVG('rect', {
-            x: this.x, // DEFINIMOS POSICION PARA EL SVG INICIAL EN X
-            y: this.y, // DEFINIMOS POSICIÓN PARA EL SVG INICIAL EN Y
-            width: this.progress_width, // ANCHO CORRESPONDIENTE AL PROGRESO
-            height: this.height, // ALTURA IGUAL AL LABEL PRINCIPAL
-            rx: this.corner_radius, // MISMO RADIO EN X
-            ry: this.corner_radius, // MISMO RADIO EN Y
-            class: 'bar-progress', // LO ASOCIAMOS A LA CLASE BAR PROGRESS
+        if (this.invalid) return;
 
-            append_to: this.bar_group, // Y LO AGREGAMOS AL CONTENEDOR DEL MISMO GROUP
+        createSVG('rect', {
+            class: 'extend',
+            x: this.x + this.width, // YA QUE NO PODEMOS OBTENERLA DESDE AQUI LA CUADRAMOS ABAJO EN EL RESETEO
+            y: this.y,
+            width: 30,
+            height: this.height,
+            append_to: this.bar_group,
         });
 
-        animateSVG(this.$bar_progress, 'width', 0, this.progress_width); // LE AGREGAMOS UN MOVIMIENTO DINAMICO EN ANCHO
+
+        // animateSVG(this.$bar_progress, 'width', 0, this.progress_width);
     }
 
     draw_label() {
-<<<<<<< HEAD
-        //GENERAMOS EL TEXTO  EN LA MISMA CAPA QUE EL LABEL Y PROGRESS BAR
-        createSVG('text', {
-            /* DEFINIMOS LA POSICIÓN DE ORIGEN DEL TEXTO
-            POR DEFAULT ESTA EN LA MITAD. */
-            x: 1000, //this.x + this.width / 4,
-            y: this.y + this.height / 2,
-            innerHTML: this.task.name, // COMO CONTENIDO PONEMOS LA TAREA A REALIZAR
-            class: 'bar-label', // LO AGREGAMOS A LA CLASE BAR-LABEL PARA EL HTML
-            append_to: this.bar_group, // LO ASOCIAMOS A LA MISMA CAPA DEL LABEL Y PROGRESS BAR
-        });
-        // labels get BBox in the next tick
-        requestAnimationFrame(() => this.update_label_position()); // ESTA ME ACTUALIZA LA POSICIÓN DEL TEXTO 
-=======
         this.const_name_x = 15;
         this.const_date_x = 35;
         this.const_porcent = 2;
@@ -963,37 +1005,47 @@ export default class Bar {
 
         }
 
->>>>>>> 9fc1482 (SE EDITAN LOS ARCHIVOS SRC PARA SUBIR A NPM...:D)
     }
 
     draw_resize_handles() {
         if (this.invalid) return;
-        //EN CASO DE SER INVALIDO NO TENDRA BARRAS DE DESPLAZAMIENTO
+        if (this.task.name == '') return;
 
-        const bar = this.$bar; // GENERO UNA CONSTANTE ASOCIADO A LA BARRA
-        const handle_width = 8; // DEFINO UN ANCHO PARA LAS BARRAS
+        const bar = this.$bar;
+        const handle_width = 8;
 
         createSVG('rect', {
-            x: bar.getX() + bar.getWidth() - 9, //DEFINIMOS LA POSICIÓN EN X DEL LADO IZQUIERDO
-            y: bar.getY() + 1, // DEFINIMOS LA POSICIÓN EN Y.
-            width: handle_width, // ANCHO DEFINIDO COMO CONSTANTE ARRIBA
-            height: this.height - 2, // ALTURA MENOR A LA ORIGINAL????'
-            rx: this.corner_radius, // MISMO RADIO
-            ry: this.corner_radius, // MISMO RADIO
-            class: 'handle right', // CLASE PARA HANDLE RIGHT
-            append_to: this.handle_group, // LO PONEMOS EN EL CONTENEDOR DE HANDLE
+            x: bar.getX() + bar.getWidth() - 10,
+            y: bar.getY() + 10,
+            width: 3,
+            height: this.height - 20,
+            rx: 2,
+            ry: 2,
+            class: 'handle right',
+            append_to: this.handle_group,
         });
 
         createSVG('rect', {
-            x: bar.getX() + 1,
-            y: bar.getY() + 1,
-            width: handle_width,
-            height: this.height - 2,
-            rx: this.corner_radius,
-            ry: this.corner_radius,
+            x: bar.getX() + 5,
+            y: bar.getY() + 10,
+            width: 3,
+            height: this.height - 20,
+            rx: 2,
+            ry: 2,
             class: 'handle left',
             append_to: this.handle_group,
         });
+
+        createSVG('image', {
+            href: 'http://drive.google.com/uc?export=view&id=1PIF3JbI0hC_VvY5jVuq3JJRKMbceziaL',
+            class: 'delete',
+            x: this.x - 14, // YA QUE NO PODEMOS OBTENERLA DESDE AQUI LA CUADRAMOS ABAJO EN EL RESETEO
+            y: this.y + this.height / 10,
+            width: 11,
+            height: 11,
+            append_to: this.handle_group
+        });
+
 
         if (this.task.progress && this.task.progress < 100) {
             this.$handle_progress = createSVG('polygon', {
@@ -1028,11 +1080,7 @@ export default class Bar {
                 return;
             }
 
-<<<<<<< HEAD
-            this.show_popup(); // MOSTRAMOS LA VENTANA EMERGENTE EN CASO DE CLICK
-=======
 
->>>>>>> 9fc1482 (SE EDITAN LOS ARCHIVOS SRC PARA SUBIR A NPM...:D)
             this.gantt.unselect_all();
             this.group.classList.add('active');
         });
@@ -1071,6 +1119,10 @@ export default class Bar {
     }
 
     update_bar_position({ x = null, width = null }) {
+        if (this.task.name == '') {
+            // INHABILITAMOS EL MOVIMIENTO PARA LOS CASOS DONDE NO SE LLENE LOS CAMPOS DE LA TAREA PRIMERO.
+            return;
+        }
         const bar = this.$bar;
         if (x) {
             // get all x values of parent task
@@ -1090,10 +1142,34 @@ export default class Bar {
         if (width && width >= this.gantt.options.column_width) {
             this.update_attr(bar, 'width', width);
         }
-        this.update_label_position();
-        this.update_handle_position();
-        this.update_progressbar_position();
+        if (this.task.name == '') {
+            this.update_label_position_null();
+
+        } else {
+            this.update_label_position();
+        }
         this.update_arrow_position();
+        if (this.task.name != '') {
+            this.update_handle_position();
+
+        }
+
+        this.update_circle_position();
+        if (this.task.Father) {
+            if (this.task.name == '') {
+                this.update_labelFather_position_null();
+            } else {
+                this.update_labelFather_position(); // ACTUALIZAMOS LOS ELEMENTOS DEL PADRE
+
+            }
+
+        } else {
+            if (this.task.name == '') {
+                this.update_labelFather_position_null();
+            }
+        }
+
+
     }
 
     date_changed() {
@@ -1110,9 +1186,6 @@ export default class Bar {
             this.task._end = new_end_date;
         }
 
-<<<<<<< HEAD
-        if (!changed) return;
-=======
         if (!changed) {
             var IdTarea = this.task.id;
             for (var i = 0; i < this.gantt.tasks.length; i++) {
@@ -1154,13 +1227,7 @@ export default class Bar {
             this.task._end,
             'DD-MMM'
         )
->>>>>>> 9fc1482 (SE EDITAN LOS ARCHIVOS SRC PARA SUBIR A NPM...:D)
 
-        this.gantt.trigger_event('date_change', [
-            this.task,
-            new_start_date,
-            date_utils.add(new_end_date, -1, 'second'),
-        ]);
     }
 
     progress_changed() {
@@ -1183,11 +1250,22 @@ export default class Bar {
             'hour'
         );
         const width_in_units = bar.getWidth() / this.gantt.options.column_width;
-        const new_end_date = date_utils.add(
-            new_start_date,
-            width_in_units * this.gantt.options.step,
-            'hour'
-        );
+        if (!Change) {
+            Change = true;
+            var new_end_date = date_utils.add(
+                new_start_date,
+                width_in_units * this.gantt.options.step - 1,
+                'hour'
+            );
+        } else {
+            var new_end_date = date_utils.add(
+                new_start_date,
+                width_in_units * this.gantt.options.step - 1,
+                'hour'
+            );
+
+        }
+
 
         return { new_start_date, new_end_date };
     }
@@ -1266,11 +1344,9 @@ export default class Bar {
         this.$bar_progress.setAttribute('x', this.$bar.getX());
         this.$bar_progress.setAttribute(
             'width',
-            this.$bar.getWidth() * (this.task.progress / 100)
+            (this.$bar.getWidth() + 27) * (this.task.progress / 100)
         );
     }
-<<<<<<< HEAD
-=======
     update_labelFather_position_null() {
         const bar = this.$bar; // DEFINIMOS EL ELEMENTO DE LA CAJA
         var InputLabel = this.group.querySelector('.InputLabel'); // OBTENEMOS LA RELACIÓN DE LA IMAGEN.
@@ -1386,17 +1462,9 @@ export default class Bar {
 
 
     }
->>>>>>> 9fc1482 (SE EDITAN LOS ARCHIVOS SRC PARA SUBIR A NPM...:D)
 
     update_label_position() {
-        const bar = this.$bar,
-            label = this.group.querySelector('.bar-label');
 
-<<<<<<< HEAD
-        if (label.getBBox().width > bar.getWidth()) {
-            label.classList.add('big');
-            label.setAttribute('x', bar.getX() + bar.getWidth() + 5); // PUEDO CAMBIAR EL ANCHO
-=======
         const bar = this.$bar, // OBTENEMOS EL CONTENEDOR
             label = this.group.querySelector(this.ClassName), //OBTENEMOS EL ANCHO ACTUAL DE LA CAJA
             label_2 = this.group.querySelector(this.ClassDate), // OBTENEMOS EL OBJETO HTML DEL TEXTO DE FECHA
@@ -1477,24 +1545,39 @@ export default class Bar {
             //label_4.classList.add('big');
             //label_4.setAttribute('x', bar.getX() + (this.const_date_x));
 
->>>>>>> 9fc1482 (SE EDITAN LOS ARCHIVOS SRC PARA SUBIR A NPM...:D)
         } else {
+
+            label_2.classList.remove('big');
+            label_2.setAttribute('x', bar.getX() + (this.const_date_x));
+            /* RESPONSIVE PARA LA FECHA DEL PROYECTO */
+            label.setAttribute('x', bar.getX() + (this.const_name_x));
             label.classList.remove('big');
-            label.setAttribute('x', bar.getX() + bar.getWidth() / 2);
+            /* RESPONSIVE PARA LA IMAGEN DE LA FECHA */
+            //label_3.classList.remove('big');
+            label_3.classList.remove('big');
+            label_3.setAttribute('x', bar.getX() + this.const_name_x);
+            label_3.setAttribute('y', bar.getY() + bar.getHeight() / 1.75);
+
+            /* MODIFICANDO TEXTO PUNTOS */
+            label_4.classList.remove('big');
         }
+
+
     }
+
 
     update_handle_position() {
         const bar = this.$bar;
         this.handle_group
             .querySelector('.handle.left')
-            .setAttribute('x', bar.getX() + 1);
+            .setAttribute('x', bar.getX() + 5);
         this.handle_group
             .querySelector('.handle.right')
-            .setAttribute('x', bar.getEndX() - 9);
+            .setAttribute('x', (parseFloat(bar.getAttribute('x')) + bar.getWidth()) - 10);
         const handle = this.group.querySelector('.handle.progress');
         handle &&
             handle.setAttribute('points', this.get_progress_polygon_points());
+        this.handle_group.querySelector('.delete').setAttribute('x', bar.getX() - 14);
     }
 
     update_arrow_position() {
@@ -1503,8 +1586,6 @@ export default class Bar {
             arrow.update();
         }
     }
-<<<<<<< HEAD
-=======
     update_circle_position() {
 
 
@@ -1516,7 +1597,6 @@ export default class Bar {
 
     }
 
->>>>>>> 9fc1482 (SE EDITAN LOS ARCHIVOS SRC PARA SUBIR A NPM...:D)
 }
 
 function isFunction(functionToCheck) {

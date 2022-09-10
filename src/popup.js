@@ -7,10 +7,10 @@ export default class Popup {
 
     make() {
         this.parent.innerHTML = `
-            <div class="title"></div>
-            <div class="subtitle"></div>
-            <div class="pointer"></div>
-        `;
+        <div class="title"></div>
+        <div class="subtitle"></div>
+        <div class="pointer"></div>
+    `;
 
         this.hide();
 
@@ -50,7 +50,7 @@ export default class Popup {
 
         if (options.position === 'left') {
             this.parent.style.left =
-                position_meta.x + (position_meta.width + 10) + 'px';
+                position_meta.x + (position_meta.width + 40) + 'px';
             this.parent.style.top = position_meta.y + 'px';
 
             this.pointer.style.transform = 'rotateZ(90deg)';

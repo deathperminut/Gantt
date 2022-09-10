@@ -22,18 +22,18 @@ const month_names = {
         'December',
     ],
     es: [
-        'Enero',
-        'Febrero',
-        'Marzo',
-        'Abril',
-        'Mayo',
-        'Junio',
-        'Julio',
-        'Agosto',
-        'Septiembre',
-        'Octubre',
-        'Noviembre',
-        'Diciembre',
+        'Ene',
+        'Feb',
+        'Mar',
+        'Abr',
+        'May',
+        'Jun',
+        'Jul',
+        'Ago',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dic',
     ],
     ru: [
         'Январь',
@@ -209,17 +209,15 @@ export default {
             scale += 's';
         }
 
-        return Math.floor(
-            {
-                milliseconds,
-                seconds,
-                minutes,
-                hours,
-                days,
-                months,
-                years,
-            }[scale]
-        );
+        return Math.floor({
+            milliseconds,
+            seconds,
+            minutes,
+            hours,
+            days,
+            months,
+            years,
+        }[scale]);
     },
 
     today() {

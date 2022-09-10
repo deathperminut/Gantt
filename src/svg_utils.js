@@ -1,11 +1,26 @@
 export function $(expr, con) {
-    return typeof expr === 'string'
-        ? (con || document).querySelector(expr)
-        : expr || null;
+    return typeof expr === 'string' ?
+        (con || document).querySelector(expr) :
+        expr || null;
 }
 
 export function createSVG(tag, attrs) {
     const elem = document.createElementNS('http://www.w3.org/2000/svg', tag);
+    for (let attr in attrs) {
+        if (attr === 'append_to') {
+            const parent = attrs.append_to;
+            parent.appendChild(elem);
+        } else if (attr === 'innerHTML') {
+            elem.innerHTML = attrs.innerHTML;
+        } else {
+            elem.setAttribute(attr, attrs[attr]);
+        }
+    }
+    return elem;
+}
+/// FUNCIÓN PARA CREAR EL INPUT
+export function createHtmlToSvg(tag, attrs) {
+    const elem = document.createElementNS('http://www.w3.org/1999/xhtml', tag);
     for (let attr in attrs) {
         if (attr === 'append_to') {
             const parent = attrs.append_to;
@@ -92,13 +107,13 @@ $.off = (element, event, handler) => {
 };
 
 $.bind = (element, event, callback) => {
-    event.split(/\s+/).forEach(function (event) {
+    event.split(/\s+/).forEach(function(event) {
         element.addEventListener(event, callback);
     });
 };
 
 $.delegate = (element, event, selector, callback) => {
-    element.addEventListener(event, function (e) {
+    element.addEventListener(event, function(e) {
         const delegatedTarget = e.target.closest(selector);
         if (delegatedTarget) {
             e.delegatedTarget = delegatedTarget;

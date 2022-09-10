@@ -13,17 +13,34 @@ var Gantt = (function() {
 
     var GenerateArrow = false; // VARIABLE PARA SABER SI ESTAMOS GENERANDO UNA FLECHA DINAMICA.
     var CircleOutputArrow = null; // VARIABLE PARA ALMACENAR EL ELEMENTO.
-    var GanttGeneral = null; // VARIABLE PARA ALMACENAR EL ELEMENTO GANTT GENERAL. IMPORTANTE
+    var GanttGeneral = null; // ARROW // BAR // GANTT VARIABLE PARA ALMACENAR EL ELEMENTO GANTT GENERAL. IMPORTANTE
     var ElementListener = null; // ALMACENAMOS LA VARIABLE HTML DE ENTRADA DE LA CONEXIÓN.
     var dependenciesFather = null; // AQUI GUARDAREMOS LOS PADRES PARA SABER SI CREARLO CON EL MOUSELEAVE.
     var ArrayEncendidos = []; // DECLARAMOS ARREGLO VACIO
     var indice = 1; // VARIABLE PARA GENERAR LOS NUEVOS ID;
     var options = null;
-    var FirstTime = true;
+    var FirstTime = true; // GANTT PERO BAR TAMBIEN DEPENDE DE EL
     var Change = false;
     var ArrayIdFather = []; // CARGAMOS EL ID DE LOS PADRES 
     var ArrayIdConectorStart = []; // ARREGLO PARA GUARDAR LOS ID DE LAS TAREAS INICIALES DE LA CONEXION
 
+    function MouseLeave(event) {
+        var BarProgress = event.path[1]; // OBTENEMOS EL CONTENEDOR
+        var CircleOutput = BarProgress.getElementsByClassName('CircleOutput');
+        var Line = BarProgress.getElementsByClassName('Line');
+        //CAMBIAMOS PROPIEDADES
+        if (CircleOutput[0].style.fill == "rgb(198, 84, 209)") {
+            CircleOutput[0].style.opacity = 1;
+            Line[0].style.opacity = 1;
+
+        } else {
+
+            CircleOutput[0].style.opacity = 0;
+            Line[0].style.opacity = 0;
+
+        }
+
+    }
     /********************************************************/
 
 
@@ -679,10 +696,6 @@ var Gantt = (function() {
                 append_to: this.bar_group,
             });
 
-
-
-            // animateSVG(this.$bar, 'width', 0, this.width);
-
             /*************GENERAMOS EL LISTENER PARA LOS HANDLERS**********************/
             if (this.task.name != '') {
                 this.handle_group.addEventListener('mouseover', MouseOverHandler, false);
@@ -822,23 +835,7 @@ var Gantt = (function() {
             }
 
 
-            function MouseLeave(event) {
-                var BarProgress = event.path[1]; // OBTENEMOS EL CONTENEDOR
-                var CircleOutput = BarProgress.getElementsByClassName('CircleOutput');
-                var Line = BarProgress.getElementsByClassName('Line');
-                //CAMBIAMOS PROPIEDADES
-                if (CircleOutput[0].style.fill == "rgb(198, 84, 209)") {
-                    CircleOutput[0].style.opacity = 1;
-                    Line[0].style.opacity = 1;
 
-                } else {
-
-                    CircleOutput[0].style.opacity = 0;
-                    Line[0].style.opacity = 0;
-
-                }
-
-            }
 
             function MouseLeaveHandler(event) {
                 var RightHandler = event.path[1].childNodes[1].childNodes[0]; // OBTENEMOS EL CONTENEDOR
@@ -856,9 +853,10 @@ var Gantt = (function() {
 
             }
             if (this.task.name != '') {
+
+                //////// LISTENER PARA EL CLICK DEL NODO DE SALIDA... \\\\\\\\\\\
                 this.bar_group.getElementsByClassName('CircleOutput')[0].addEventListener('click', (event) => {
                     event.path[1].removeEventListener('mouseleave', MouseLeave, false); // DEJAMOS FIJO LA FLECHA
-                    console.log(event.path[1]);
                     ElementListener = event.path[1];
                     if (GenerateArrow) {
                         event.path[1].removeEventListener('mouseleave', MouseLeave, false); // DEJAMOS FIJO LA FLECHA
@@ -878,7 +876,7 @@ var Gantt = (function() {
 
                                     if (!GanttGeneral.bars[i].task.dependencies.includes(this.task.id) && GanttGeneral.bars[i].task.name != '' &&
                                         !this.task.dependencies.includes(GanttGeneral.bars[i].task.id)) {
-
+                                        console.log('CULPABLE 1');
                                         GanttGeneral.bars[i].bar_group.childNodes[1].style.opacity = 1;
                                         GanttGeneral.bars[i].bar_group.childNodes[1].style.fill = '#C654D1';
                                         ArrayEncendidos.push(GanttGeneral.bars[i]);
@@ -898,6 +896,7 @@ var Gantt = (function() {
                             if (GanttGeneral.bars[i].task.id != this.task.id) {
                                 if (!GanttGeneral.bars[i].task.Father && GanttGeneral.bars[i].task.name != '' && !this.task.dependencies.includes(GanttGeneral.bars[i].task.id)) {
                                     if (!GanttGeneral.bars[i].task.dependencies.includes(this.task.id)) {
+                                        console.log('CULPABLE 2');
                                         GanttGeneral.bars[i].bar_group.childNodes[1].style.opacity = 1;
                                         GanttGeneral.bars[i].bar_group.childNodes[1].style.fill = '#C654D1';
                                         ArrayEncendidos.push(GanttGeneral.bars[i]);
@@ -940,12 +939,15 @@ var Gantt = (function() {
                         }
                     }
                     if (ArrayEncendidos.length == 0) {
-                        alert('No tiene nodos de conexion permitidos...');
                         GenerateArrow = false;
-                        this.bar_group.getElementsByClassName('CircleOutput')[0].style.fill = "black";
-                        this.bar_group.getElementsByClassName('CircleOutput')[0].style.opacity = 0;
-                        this.bar_group.getElementsByClassName('Line')[0].style.opacity = 0;
-                        event.path[1].addEventListener('mouseleave', MouseLeave, false);
+
+                        if (this.bar_group.getElementsByClassName('CircleOutput')[0].style.fill == "black") {
+                            this.bar_group.getElementsByClassName('CircleOutput')[0].style.fill = "black";
+                            this.bar_group.getElementsByClassName('CircleOutput')[0].style.opacity = 0;
+                            this.bar_group.getElementsByClassName('Line')[0].style.opacity = 0;
+                            event.path[1].addEventListener('mouseleave', MouseLeave, false);
+                        }
+
 
 
                     } else {
@@ -978,12 +980,7 @@ var Gantt = (function() {
             }
 
             //GENERAMOS EL LISTENER PARA LA CONEXIÓN FINAL DE CLICK PARA LA FLECHA.
-            // this.bar_group.getElementsByClassName('CircleInput')[0].addEventListener('mouseover', (event) => {
-            //     if (GenerateArrow) {
-            //         this.bar_group.getElementsByClassName('CircleInput')[0].style.fill = "red";
-            //     }
 
-            // }, false)
             document.addEventListener('dblclick', (event) => {
                 this.bar_group.getElementsByClassName('CircleOutput')[0].style.fill = "#000";
                 if (GenerateArrow) {
@@ -1061,13 +1058,45 @@ var Gantt = (function() {
             }, false)
 
 
-
             this.bar_group.getElementsByClassName('CircleInput')[0].addEventListener('click', (event) => {
+
                 if (!ArrayIdConectorStart.includes(this.task.id)) {
                     return;
                 }
                 if (GenerateArrow) {
                     console.log('CONECTADA');
+
+
+                    /// AL REALIZAR LA CONEXIÓN APAGAMOS LOS NODOS Y DESABILITAMOS LOS QUE NO TIENEN NINGUNA CONEXION
+
+                    for (var i = 0; i < ArrayEncendidos.length; i++) {
+
+                        ArrayEncendidos[i].bar_group.childNodes[1].style.fill = 'black';
+                        if (ArrayEncendidos[i].task.dependencies.length == 0 && ArrayEncendidos[i].task.id != CircleOutputArrow.task.id) {
+                            ArrayEncendidos[i].bar_group.childNodes[1].style.opacity = 0;
+
+                        } else {
+                            if (ArrayEncendidos[i].task.dependencies.length == 1 && ArrayEncendidos[i].task.id != CircleOutputArrow.task.id && !ArrayEncendidos[i].task.Father) {
+                                ArrayEncendidos[i].bar_group.childNodes[1].style.opacity = 0;
+
+                            }
+
+                        }
+
+
+                    }
+
+
+
+
+
+
+
+
+
+                    //////////////////////////////////////////////////////////////////////////
+
+
                     ArrayEncendidos = []; // VACIAMOS EL ARREGLO
                     ArrayIdConectorStart = [];
                     CircleOutputArrow.bar_group.getElementsByClassName('CircleOutput')[0].style.fill = "#000";
@@ -1094,7 +1123,15 @@ var Gantt = (function() {
                             //NO USAR LA FUNCIÓN SINO AGREGARLAS A LA LISTA 
                             dependenciesFather = Object.keys(this.gantt.dependency_map) // OBTENEMOS LAS LLAVES....
 
-                            this.gantt.render();
+
+                            for (var i = 0; i < GanttGeneral.arrows.length; i++) {
+                                GanttGeneral.arrows[i].element.remove();
+
+                            }
+                            GanttGeneral.setup_tasks(GanttGeneral.tasks);
+                            GanttGeneral.make_arrows();
+                            GanttGeneral.map_arrows_on_bars();
+
                             break;
                         }
                     }
@@ -1167,12 +1204,11 @@ var Gantt = (function() {
                 UrlImag = 'dist/Imag/dategris.png';
 
             }
-            //var TextName = document.createElementNS("http://www.w3.org/1999/xhtml", "input");
             if (this.task.name == '') {
                 createSVG('foreignObject', {
                     class: 'InputLabel',
                     x: position_x,
-                    y: this.y + this.height / 15,
+                    y: this.y + this.height / 5,
                     width: 185,
                     height: 70,
                     append_to: this.bar_group,
@@ -1194,7 +1230,8 @@ var Gantt = (function() {
                             if (Input == event.path[0]) {
 
                                 GanttGeneral.bars[i].task.name = event.path[0].value; // REEMPLAZAMOS EL NOMBRE
-
+                                var PositionScroll = GanttGeneral.bars[i].$bar.getX();
+                                GenerateArrow = false;
                                 break; // SALIMOS DEL CICLO
                             }
 
@@ -1206,6 +1243,7 @@ var Gantt = (function() {
                         // // initialize with default view mode
                         GanttGeneral.change_view_mode();
                         GanttGeneral.bind_events();
+                        GanttGeneral.set_scroll_position(PositionScroll);
                     }
                 })
             } else {
@@ -1214,7 +1252,7 @@ var Gantt = (function() {
                     innerHTML: this.task.name,
                     class: ClassName,
                     x: position_x,
-                    y: this.y + this.height / 2.2,
+                    y: this.y + this.height / 1.7,
                     width: 140,
                     height: 10,
                     append_to: this.bar_group,
@@ -1280,6 +1318,21 @@ var Gantt = (function() {
                 requestAnimationFrame(() => this.update_label_position());
 
             }
+            /********GENERAMOS EL CLICK PARA EL BOTON DE INFO**************************/
+            this.bar_group.addEventListener('mouseover', (event) => {
+                GanttGeneral.popup_wrapper.style.visibility = 'visible';
+                this.show_popup();
+
+            }, false);
+            this.bar_group.addEventListener('mouseleave', (event) => {
+                GanttGeneral.popup_wrapper.style.visibility = 'hidden';
+                GanttGeneral.hide_popup();
+
+            }, false);
+
+
+
+            /**************************************************************************/
 
             if (this.task.Father && this.task.name != '') {
 
@@ -1292,20 +1345,7 @@ var Gantt = (function() {
                     heigth: 11,
                     append_to: this.bar_group,
                 });
-                /********GENERAMOS EL CLICK PARA EL BOTON DE INFO**************************/
 
-                var ImagenInfo = this.bar_group.getElementsByClassName('bar-label InfoImage')[0];
-                ImagenInfo.addEventListener('mouseover', (event) => {
-                    this.show_popup();
-                }, false);
-                var ImagenInfo = this.bar_group.getElementsByClassName('bar-label InfoImage')[0];
-                ImagenInfo.addEventListener('mouseleave', (event) => {
-                    GanttGeneral.hide_popup();
-                }, false);
-
-
-
-                /**************************************************************************/
                 createSVG('text', {
                     innerHTML: '%',
                     class: 'bar-label PorcentText',
@@ -1392,8 +1432,6 @@ var Gantt = (function() {
                 var TaskCreate = this.bar_group.getElementsByClassName('bar-label TaskButton')[0];
 
                 TaskCreate.addEventListener('click', (event) => {
-                    var ArrayTaskId = []; // CREO UN ARREGLO VACIO PARA ALMACENAR LOS ID NORMALES
-
                     // CREO UN CICLO PARA GENERAR UN ID Y MIRAR SI ES UNICO PARA LA UNICA TAREA.
 
                     var task = {
@@ -1409,7 +1447,11 @@ var Gantt = (function() {
 
                     //LA AGREGO JUSTO CUANDO EMPIEZA LA TAREA PADRE QUE REQUIERE
                     for (var i = 0; i < GanttGeneral.tasks.length; i++) {
-                        if (GanttGeneral.tasks[i].id == this.task.id) {
+                        if (GanttGeneral.bars[i].task.id == this.task.id) {
+
+                            var PositionScroll = GanttGeneral.bars[i].$bar.getX();
+
+
                             if (i == GanttGeneral.tasks.length - 1) {
                                 GanttGeneral.tasks.push(task); // SI ES LA ULTIMA TAREA LA AGREGAMOS AL FINAL
                                 break;
@@ -1419,40 +1461,28 @@ var Gantt = (function() {
                             }
                         }
                     }
+                    // CREACIÓN TAREAS..
                     this.gantt.setup_tasks(this.gantt.tasks);
+                    GenerateArrow = false;
 
-                    // initialize with default view mode
                     this.gantt.change_view_mode();
+                    GanttGeneral.set_scroll_position(PositionScroll);
                     this.gantt.bind_events();
+                    GanttGeneral.set_scroll_position(PositionScroll);
+
+
+
+
+
 
                 }, false);
 
 
                 /**************************************************************************/
 
-
-
-
-
-
-
                 requestAnimationFrame(() => this.update_labelFather_position());
 
             }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
         }
 
@@ -1464,9 +1494,9 @@ var Gantt = (function() {
             const handle_width = 8;
 
             createSVG('rect', {
-                x: bar.getX() + bar.getWidth() - 5,
+                x: bar.getX() + bar.getWidth() - 10,
                 y: bar.getY() + 10,
-                width: 5,
+                width: 3,
                 height: this.height - 20,
                 rx: 2,
                 ry: 2,
@@ -1475,9 +1505,9 @@ var Gantt = (function() {
             });
 
             createSVG('rect', {
-                x: bar.getX(),
+                x: bar.getX() + 5,
                 y: bar.getY() + 10,
-                width: 5,
+                width: 3,
                 height: this.height - 20,
                 rx: 2,
                 ry: 2,
@@ -1530,7 +1560,6 @@ var Gantt = (function() {
                 }
 
 
-                //this.show_popup();
                 this.gantt.unselect_all();
                 this.group.classList.add('active');
             });
@@ -1861,7 +1890,7 @@ var Gantt = (function() {
 
             /* OBTENEMOS LA DISTANCIA ENTRE EL BOTON DE TASK Y EL TEXTO DE TAREAS */
 
-            if ((TaskButtonX - PositionNameFinal) < 5 || (TaskButtonX - PositionDateFinal) < 5) {
+            if ((TaskButtonX - PositionNameFinal) < 2) {
                 TaskButton.classList.add('big');
             } else {
                 TaskButton.classList.remove('big');
@@ -2019,10 +2048,10 @@ var Gantt = (function() {
             const bar = this.$bar;
             this.handle_group
                 .querySelector('.handle.left')
-                .setAttribute('x', bar.getX());
+                .setAttribute('x', bar.getX() + 5);
             this.handle_group
                 .querySelector('.handle.right')
-                .setAttribute('x', (parseFloat(bar.getAttribute('x')) + bar.getWidth()) - 5);
+                .setAttribute('x', (parseFloat(bar.getAttribute('x')) + bar.getWidth()) - 10);
             const handle = this.group.querySelector('.handle.progress');
             handle &&
                 handle.setAttribute('points', this.get_progress_polygon_points());
@@ -2065,6 +2094,7 @@ var Gantt = (function() {
             var Line = this.from_task.bar_group.childNodes[2];
             CircleOutput.style.opacity = 1;
             Line.style.opacity = 1;
+            console.log('CULPABLE 3');
             CircleInput.style.opacity = 1;
 
         }
@@ -2161,6 +2191,7 @@ var Gantt = (function() {
             this.element.addEventListener('click', (event) => {
                 // GENERO UN CICLO PARA ENCONTRAR LA DEPENDENCIA DE LAS HIJAS..
                 console.log('click arrow');
+                console.log(GanttGeneral);
                 var bandera = false;
                 //ELIMINAMOS LA ASOCIACIÓN EN EL DEPENDECIES MAP
                 var Indice = GanttGeneral.dependency_map[this.from_task.task.id].findIndex(task => task === this.to_task.task.id);
@@ -2262,10 +2293,8 @@ var Gantt = (function() {
                 //////////////////////////////////////////////////////////
 
                 GanttGeneral.setup_tasks(GanttGeneral.tasks);
-                //GanttGeneral.render();
-                // initializ with default view mode
-                GanttGeneral.change_view_mode();
-                GanttGeneral.bind_events();
+
+
 
             });
 
@@ -2280,7 +2309,7 @@ var Gantt = (function() {
 
         update() {
             this.calculate_path();
-            this.generateConector();
+            //this.generateConector();
             this.element.setAttribute('d', this.path);
 
         }
@@ -2457,7 +2486,7 @@ var Gantt = (function() {
                 date_format: 'YYYY-MM-DD',
                 popup_trigger: 'click',
                 custom_popup_html: null,
-                language: 'en',
+                language: 'es',
             };
             this.options = Object.assign({}, default_options, options);
         }
@@ -2597,16 +2626,17 @@ var Gantt = (function() {
 
             // add date padding on both sides
             if (this.view_is([VIEW_MODE.QUARTER_DAY, VIEW_MODE.HALF_DAY])) {
-                this.gantt_start = date_utils.add(this.gantt_start, -7, 'day');
-                this.gantt_end = date_utils.add(this.gantt_end, 7, 'day');
+                this.gantt_start = date_utils.add(this.gantt_start, -3, 'day');
+                this.gantt_end = date_utils.add(this.gantt_end, 15, 'day');
             } else if (this.view_is(VIEW_MODE.MONTH)) {
                 this.gantt_start = date_utils.start_of(this.gantt_start, 'year');
-                this.gantt_end = date_utils.add(this.gantt_end, 1, 'year');
-            } else if (this.view_is(VIEW_MODE.YEAR)) {
-                this.gantt_start = date_utils.add(this.gantt_start, -2, 'year');
                 this.gantt_end = date_utils.add(this.gantt_end, 2, 'year');
+            } else if (this.view_is(VIEW_MODE.YEAR)) {
+                this.gantt_start = date_utils.add(this.gantt_start, 0, 'year');
+                this.gantt_end = date_utils.add(this.gantt_end, 3, 'year');
             } else {
-                this.gantt_start = date_utils.add(this.gantt_start, -1, 'month');
+                this.gantt_start = date_utils.add(this.gantt_start, -3, 'day');
+                this.gantt_start = date_utils.add(this.gantt_start, 0, 'month');
                 this.gantt_end = date_utils.add(this.gantt_end, 1, 'month');
             }
         }
@@ -2666,21 +2696,25 @@ var Gantt = (function() {
         }
 
         make_grid() {
-            this.make_grid_background();
-            this.make_grid_rows();
-            this.make_grid_header();
-            this.make_grid_ticks();
-            this.make_grid_highlights();
+            this.make_grid_background(); // CORREGIDO PARA GENERAR MALLA
+            this.make_grid_rows(); // CORREGIDO PARA GENERAR MALLA
+            this.make_grid_header(); // NO SE DEBERIA TOCAR PARA GENERAR MALLA
+            this.make_grid_ticks(); // CORREGIDO PARA GENERAR MALLA
+            this.make_grid_highlights(); // SOMBREADO FALTA
         }
 
         make_grid_background() {
             const grid_width = this.dates.length * this.options.column_width;
+            if (this.tasks.length < 10) {
+                length = 10;
+            } else {
+                length = this.tasks.length;
+            }
             const grid_height =
                 this.options.header_height +
                 this.options.padding +
                 (this.options.bar_height + this.options.padding) *
-                this.tasks.length;
-
+                length;
 
             createSVG('rect', {
                 x: 0,
@@ -2697,7 +2731,8 @@ var Gantt = (function() {
             });
         }
 
-        make_grid_rows() {
+        make_grid_rows(TaskFather = null) {
+
             const rows_layer = createSVG('g', { append_to: this.layers.grid });
             const lines_layer = createSVG('g', { append_to: this.layers.grid });
 
@@ -2706,7 +2741,11 @@ var Gantt = (function() {
 
             let row_y = this.options.header_height + this.options.padding / 2;
 
+            var count = 0; // INICIALIZAMOS UN CONTADOR PARA CUADRAR UNA GRILLA POR DEFAULT.
+
+
             for (let task of this.tasks) {
+                count += 1;
                 createSVG('rect', {
                     x: 0,
                     y: row_y,
@@ -2728,11 +2767,45 @@ var Gantt = (function() {
 
                 row_y += this.options.bar_height + this.options.padding;
             }
+
+            if (count < 10) {
+
+                var Rest = 10 - count;
+                for (var i = 0; i < Rest; i++) {
+                    createSVG('rect', {
+                        x: 0,
+                        y: row_y,
+                        width: row_width,
+                        height: row_height,
+                        class: 'grid-row',
+                        append_to: rows_layer,
+                    });
+
+                    createSVG('line', {
+                        x1: 0,
+                        y1: row_y + row_height,
+                        x2: row_width,
+                        y2: row_y + row_height,
+                        class: 'row-line',
+                        append_to: lines_layer,
+                    });
+
+
+                    row_y += this.options.bar_height + this.options.padding;
+
+                }
+
+
+
+            }
+
         }
 
         make_grid_header() {
             const header_width = this.dates.length * this.options.column_width;
             const header_height = this.options.header_height + 10;
+            this.header_width = this.dates.length * this.options.column_width;
+            this.header_height = this.options.header_height + 10;
             createSVG('rect', {
                 x: 0,
                 y: 0,
@@ -2746,9 +2819,14 @@ var Gantt = (function() {
         make_grid_ticks() {
             let tick_x = 0;
             let tick_y = this.options.header_height + this.options.padding / 2;
+            if (this.tasks.length < 10) {
+                length = 10;
+            } else {
+                length = this.tasks.length
+            }
             let tick_height =
                 (this.options.bar_height + this.options.padding) *
-                this.tasks.length;
+                length;
 
             for (let date of this.dates) {
                 let tick_class = 'tick';
@@ -2799,9 +2877,14 @@ var Gantt = (function() {
                 const y = 0;
 
                 const width = this.options.column_width;
+                if (this.tasks.length < 10) {
+                    length = 10;
+                } else {
+                    length = this.tasks.length;
+                }
                 const height =
                     (this.options.bar_height + this.options.padding) *
-                    this.tasks.length +
+                    length +
                     this.options.header_height +
                     this.options.padding / 2;
 
@@ -2813,7 +2896,7 @@ var Gantt = (function() {
                         rx: this.options.bar_corner_radius,
                         ry: this.options.bar_corner_radius,
 
-                        height: 50,
+                        height: this.header_height,
                         class: 'today-header',
                         append_to: this.layers.grid,
                     });
@@ -2967,7 +3050,7 @@ var Gantt = (function() {
                 Year_lower: this.options.column_width / 2,
                 Year_upper: (this.options.column_width * 30) / 2,
             };
-
+            this.layerba
             return {
                 upper_text: date_text[`${this.options.view_mode}_upper`],
                 lower_text: date_text[`${this.options.view_mode}_lower`],
@@ -3014,6 +3097,8 @@ var Gantt = (function() {
 
         make_arrows() {
 
+
+
             GanttGeneral.arrows = [];
             for (let task of GanttGeneral.tasks) {
                 let arrows = []; // CREAMOS UN ARREGLO PARA LAS TAREAS
@@ -3059,22 +3144,29 @@ var Gantt = (function() {
             }
         }
 
-        set_scroll_position() {
+        set_scroll_position(TaskButton = null) {
             const parent_element = this.$svg.parentElement;
             if (!parent_element) return;
+            if (TaskButton == null) {
 
-            const hours_before_first_task = date_utils.diff(
-                this.get_oldest_starting_date(),
-                this.gantt_start,
-                'hour'
-            );
 
-            const scroll_pos =
-                (hours_before_first_task / this.options.step) *
-                this.options.column_width -
-                this.options.column_width;
+                const hours_before_first_task = date_utils.diff(
+                    this.get_oldest_starting_date(),
+                    this.gantt_start,
+                    'hour'
+                );
 
-            parent_element.scrollLeft = scroll_pos;
+                var scroll_pos = (hours_before_first_task / this.options.step) *
+                    this.options.column_width -
+                    this.options.column_width;
+
+                parent_element.scrollLeft = scroll_pos;
+
+            } else {
+                var scroll_pos = TaskButton - 30;
+                parent_element.scrollLeft = scroll_pos;
+            }
+
         }
 
         bind_grid_click() {

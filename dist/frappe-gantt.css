@@ -9,11 +9,11 @@
 }
 
 .gantt .grid-row {
-    fill: #ffffff;
+    fill: #ffffff !important;
 }
 
 .gantt .grid-row:nth-child(even) {
-    fill: #ffffff;
+    fill: #ffffff !important;
 }
 
 .gantt .row-line {
@@ -57,11 +57,12 @@
 .gantt .arrow {
     fill: none;
     opacity: 1;
-    stroke: #6149CD;
-    stroke-width: 2;
+    stroke: #6149CD !important;
+    stroke-width: 2 !important;
 }
 
 .gantt .bar {
+    text-anchor: start !important;
     stroke: #8D99A6;
     stroke-width: 0;
     transition: stroke-width 0.3s ease;
@@ -102,7 +103,7 @@
 
 .inputName {
     width: 250px;
-    height: 14px;
+    height: 20px;
     background-color: transparent;
     border: 0;
     color: rgb(187, 184, 184)
@@ -168,7 +169,7 @@
 }
 
 .gantt .bar-label.dateImage {
-    visibility: visible;
+    visibility: hidden;
 }
 
 
@@ -184,32 +185,39 @@
     text-anchor: start;
     font-size: 10px;
     font-weight: lighter;
-    font-family: Manrope;
     alignment-baseline: start;
 }
 
 .gantt .bar-label.name {
-    fill: #e9e6e6;
+    fill: #e9e6e6 !important;
     visibility: visible;
-    font-size: 13px;
+    font-size: 13px !important;
+    text-anchor: start !important;
+    dominant-baseline: initial !important;
     /* transition: 0.2s; */
 }
 
 .gantt .bar-label.InfoImage {
-    visibility: visible;
+    visibility: hidden;
     /* transition: 0.2s; */
 }
 
 .gantt .bar-label.nameSon {
-    fill: black;
+    font-size: 13px !important;
+    text-anchor: start !important;
+    dominant-baseline: initial !important;
+    fill: black !important;
     font-size: 13px;
+    font-family: 'Times New Roman', Times, serif;
     visibility: visible;
     /* transition: 0.2s; */
 }
 
 .gantt .bar-label.date {
-    fill: #e9e6e6;
-    visibility: visible;
+    fill: #e9e6e6 !important;
+    visibility: hidden;
+    font-size: 13px !important;
+    text-anchor: start !important;
     /* transition: 0.2s; */
 }
 
@@ -229,8 +237,10 @@
 }
 
 .gantt .bar-label.dateSon {
-    fill: black;
-    visibility: visible;
+    fill: black !important;
+    visibility: hidden;
+    font-size: 13px !important;
+    text-anchor: start !important;
     /* transition: 0.2s; */
 }
 
@@ -423,6 +433,7 @@
 
 .gantt-container .popup-wrapper {
     position: absolute;
+    visibility: hidden;
     top: 0;
     left: 0;
     background: rgba(0, 0, 0, 0.8);

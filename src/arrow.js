@@ -1,11 +1,3 @@
-<<<<<<< HEAD
-import { createSVG } from './svg_utils';
-
-export default class Arrow {
-    constructor(gantt, from_task, to_task) {
-        this.gantt = gantt;
-        this.from_task = from_task;
-=======
 import { createSVG } from './svg_utils.js';
 
 function MouseLeave(event) {
@@ -37,14 +29,11 @@ export default class Arrow {
         GanttGeneral = gantt;
         this.gantt = gantt; // TENEMOS EL GANK
         this.from_task = from_task; // TENEMOS LA TAREA PRINCIPAL
->>>>>>> 9fc1482 (SE EDITAN LOS ARCHIVOS SRC PARA SUBIR A NPM...:D)
         this.to_task = to_task;
-
+        this.generateConector();
         this.calculate_path();
         this.draw();
     }
-<<<<<<< HEAD
-=======
     generateConector() {
 
 
@@ -57,33 +46,24 @@ export default class Arrow {
         CircleInput.style.opacity = 1;
 
     }
->>>>>>> 9fc1482 (SE EDITAN LOS ARCHIVOS SRC PARA SUBIR A NPM...:D)
 
     calculate_path() {
         let start_x =
-            this.from_task.$bar.getX() + this.from_task.$bar.getWidth() / 2;
-
-        const condition = () =>
-            this.to_task.$bar.getX() < start_x + this.gantt.options.padding &&
-            start_x > this.from_task.$bar.getX() + this.gantt.options.padding;
-
-        while (condition()) {
-            start_x -= 10;
-        }
+            this.from_task.$bar.getX() + this.from_task.$bar.getWidth() + 10;
 
         const start_y =
             this.gantt.options.header_height +
             this.gantt.options.bar_height +
             (this.gantt.options.padding + this.gantt.options.bar_height) *
-                this.from_task.task._index +
-            this.gantt.options.padding;
+            this.from_task.task._index +
+            this.gantt.options.padding - 20;
 
-        const end_x = this.to_task.$bar.getX() - this.gantt.options.padding / 2;
+        const end_x = this.to_task.$bar.getX();
         const end_y =
             this.gantt.options.header_height +
             this.gantt.options.bar_height / 2 +
             (this.gantt.options.padding + this.gantt.options.bar_height) *
-                this.to_task.task._index +
+            this.to_task.task._index +
             this.gantt.options.padding;
 
         const from_is_below_to =
@@ -91,53 +71,62 @@ export default class Arrow {
         const curve = this.gantt.options.arrow_curve;
         const clockwise = from_is_below_to ? 1 : 0;
         const curve_y = from_is_below_to ? -curve : curve;
-        const offset = from_is_below_to
-            ? end_y + this.gantt.options.arrow_curve
-            : end_y - this.gantt.options.arrow_curve;
+        const offset = from_is_below_to ?
+            end_y + this.gantt.options.arrow_curve :
+            end_y - this.gantt.options.arrow_curve;
 
+
+        const down_1 = this.gantt.options.padding / 2 - curve;
+        const down_2 =
+            this.to_task.$bar.getY() +
+            this.to_task.$bar.getHeight() / 2 -
+            curve_y;
+        const left = this.to_task.$bar.getX() - this.gantt.options.padding;
+        if (start_y > end_y) {
+            var down1 = -down_1 - 20
+            this.crossPositiony = start_y + down1 - 5.5;
+        } else {
+            this.crossPositiony = start_y + down_1 + 20 - 5.5;
+            var down1 = down_1 + 20
+        }
         this.path = `
             M ${start_x} ${start_y}
-            V ${offset}
+            v ${down1}
+            a ${curve} ${curve} 0 0 1 -${curve} ${curve}
+            H ${left}
+            a ${curve} ${curve} 0 0 ${clockwise} -${curve} ${curve_y}
+            V ${down_2}
             a ${curve} ${curve} 0 0 ${clockwise} ${curve} ${curve_y}
             L ${end_x} ${end_y}
-            m -5 -5
-            l 5 5
-            l -5 5`;
+            `;
 
-        if (
-            this.to_task.$bar.getX() <
-            this.from_task.$bar.getX() + this.gantt.options.padding
-        ) {
-            const down_1 = this.gantt.options.padding / 2 - curve;
-            const down_2 =
-                this.to_task.$bar.getY() +
-                this.to_task.$bar.getHeight() / 2 -
-                curve_y;
-            const left = this.to_task.$bar.getX() - this.gantt.options.padding;
 
-            this.path = `
-                M ${start_x} ${start_y}
-                v ${down_1}
-                a ${curve} ${curve} 0 0 1 -${curve} ${curve}
-                H ${left}
-                a ${curve} ${curve} 0 0 ${clockwise} -${curve} ${curve_y}
-                V ${down_2}
-                a ${curve} ${curve} 0 0 ${clockwise} ${curve} ${curve_y}
-                L ${end_x} ${end_y}
-                m -5 -5
-                l 5 5
-                l -5 5`;
+
+        var down2 = down_2 - (start_y + down_1);
+
+        if (end_y > start_y && end_x > start_x) {
+            this.crossPositionX = ((end_x - start_x) / 2) + start_x - 11;
+        } else if (end_y > start_y && start_x > end_x) {
+            this.crossPositionX = ((start_x - end_x) / 2) + end_x - 11;
+        } else if (end_y < start_y && start_x < end_x) {
+            this.crossPositionX = ((end_x - start_x) / 2) + start_x - 11;
+
+        } else {
+            this.crossPositionX = ((start_x - end_x) / 2) + end_x - 11;
         }
+
+
+
+
     }
 
     draw() {
         this.element = createSVG('path', {
             d: this.path,
+            width: 20,
             'data-from': this.from_task.task.id,
             'data-to': this.to_task.task.id,
         });
-<<<<<<< HEAD
-=======
 
         this.element.addEventListener('mouseover', (event) => {
                 this.element.style.stroke = '#DE9BE8';
@@ -263,19 +252,13 @@ export default class Arrow {
             this.to_task.handle_group.childNodes[2].style.visibility = 'hidden';
 
         }, false)
->>>>>>> 9fc1482 (SE EDITAN LOS ARCHIVOS SRC PARA SUBIR A NPM...:D)
     }
+
 
     update() {
         this.calculate_path();
-<<<<<<< HEAD
-=======
         //this.generateConector();
->>>>>>> 9fc1482 (SE EDITAN LOS ARCHIVOS SRC PARA SUBIR A NPM...:D)
         this.element.setAttribute('d', this.path);
+
     }
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 9fc1482 (SE EDITAN LOS ARCHIVOS SRC PARA SUBIR A NPM...:D)
