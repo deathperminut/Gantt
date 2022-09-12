@@ -1,7 +1,7 @@
 {
     "type": "module",
     "name": "bios-gantt_2",
-    "version": "0.0.69",
+    "version": "0.0.70",
     "description": "A simple, modern, interactive gantt library for the web",
     "main": "src/index.js",
     "scripts": {

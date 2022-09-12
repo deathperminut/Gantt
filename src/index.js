@@ -350,8 +350,8 @@ export default class Gantt {
 
     make_grid_background() {
         const grid_width = this.dates.length * this.options.column_width;
-        if (this.tasks.length < 10) {
-            length = 10;
+        if (this.tasks.length < 15) {
+            length = 15;
         } else {
             length = this.tasks.length;
         }
@@ -371,7 +371,7 @@ export default class Gantt {
         });
 
         $.attr(this.$svg, {
-            height: grid_height + this.options.padding + 100,
+            height: grid_height + this.options.padding - 50,
             width: '100%',
         });
     }
@@ -413,9 +413,9 @@ export default class Gantt {
             row_y += this.options.bar_height + this.options.padding;
         }
 
-        if (count < 10) {
+        if (count < 15) {
 
-            var Rest = 10 - count;
+            var Rest = 15 - count;
             for (var i = 0; i < Rest; i++) {
                 createSVG('rect', {
                     x: 0,
@@ -464,8 +464,8 @@ export default class Gantt {
     make_grid_ticks() {
         let tick_x = 0;
         let tick_y = this.options.header_height + this.options.padding / 2;
-        if (this.tasks.length < 10) {
-            length = 10;
+        if (this.tasks.length < 15) {
+            length = 15;
         } else {
             length = this.tasks.length
         }
@@ -522,8 +522,8 @@ export default class Gantt {
             const y = 0;
 
             const width = this.options.column_width;
-            if (this.tasks.length < 10) {
-                length = 10;
+            if (this.tasks.length < 15) {
+                length = 15;
             } else {
                 length = this.tasks.length;
             }

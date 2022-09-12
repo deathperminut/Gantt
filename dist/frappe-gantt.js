@@ -2705,8 +2705,8 @@ var Gantt = (function() {
 
         make_grid_background() {
             const grid_width = this.dates.length * this.options.column_width;
-            if (this.tasks.length < 10) {
-                length = 10;
+            if (this.tasks.length < 16) {
+                length = 16;
             } else {
                 length = this.tasks.length;
             }
@@ -2726,7 +2726,7 @@ var Gantt = (function() {
             });
 
             $.attr(this.$svg, {
-                height: grid_height + this.options.padding + 100,
+                height: grid_height + this.options.padding - 50, // CAMBIOS 1
                 width: '100%',
             });
         }
@@ -2768,9 +2768,9 @@ var Gantt = (function() {
                 row_y += this.options.bar_height + this.options.padding;
             }
 
-            if (count < 10) {
+            if (count < 16) {
 
-                var Rest = 10 - count;
+                var Rest = 16 - count;
                 for (var i = 0; i < Rest; i++) {
                     createSVG('rect', {
                         x: 0,
@@ -2819,8 +2819,8 @@ var Gantt = (function() {
         make_grid_ticks() {
             let tick_x = 0;
             let tick_y = this.options.header_height + this.options.padding / 2;
-            if (this.tasks.length < 10) {
-                length = 10;
+            if (this.tasks.length < 16) {
+                length = 16;
             } else {
                 length = this.tasks.length
             }
@@ -2877,8 +2877,8 @@ var Gantt = (function() {
                 const y = 0;
 
                 const width = this.options.column_width;
-                if (this.tasks.length < 10) {
-                    length = 10;
+                if (this.tasks.length < 16) {
+                    length = 16;
                 } else {
                     length = this.tasks.length;
                 }

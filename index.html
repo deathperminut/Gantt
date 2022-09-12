@@ -26,111 +26,22 @@
     </div>
     <script>
         var tasks = [{
-                start: '2022-08-25',
-                end: '2022-08-29',
-                name: 'Father_2',
-                id: "Task 10",
-                Father: true,
-                Porcent: 100,
-            }, {
-                start: '2022-08-25',
-                end: '2022-08-29',
-                name: 'Father_3',
-                id: "Task 11",
-                Father: true,
-                Porcent: 100,
-            }, {
-                start: '2022-08-25',
-                end: '2022-08-29',
-                name: 'Father_4',
-                id: "Task 12",
-                Father: true,
-                Porcent: 100,
-            }]
-            // var tasks = [{
-            //     start: '2022-08-25',
-            //     end: '2022-08-29',
-            //     name: 'Father_2',
-            //     id: "Task 9",
-            //     Father: true,
-            //     Porcent: 100,
-            // }, {
-            //     start: '2022-08-26',
-            //     end: '2022-08-28',
-            //     name: 'Son_1',
-            //     id: "Task 11",
-            //     Father: false,
-            //     Porcent: 100,
-            //     dependencies: ['Task 9']
+            start: '2022-08-25',
+            end: '2022-08-29',
+            name: 'Father_3',
+            id: "Task 11",
+            Father: true,
+            Porcent: 100,
+        }, {
+            start: '2022-08-25',
+            end: '2022-08-29',
+            name: 'Father_4',
+            id: "Task 12",
+            Father: true,
+            Porcent: 100,
+        }]
 
-        // }, {
-        //     start: '2022-08-27',
-        //     end: '2022-08-28',
-        //     name: 'Son_1',
-        //     id: "Task 12",
-        //     Father: false,
-        //     Porcent: 100,
-        //     dependencies: ['Task 11']
-
-        // }, {
-        //     start: '2022-09-02',
-        //     end: '2022-09-07',
-        //     name: 'Father_3',
-        //     id: "Task 10",
-        //     Father: true,
-        //     Porcent: 100,
-
-        // }, {
-        //     start: '2022-09-02',
-        //     end: '2022-09-05',
-        //     name: 'Son_3',
-        //     id: "Task 13",
-        //     Father: false,
-        //     Porcent: 100,
-        //     dependencies: ['Task 10']
-
-        // }, {
-        //     start: '2022-09-04',
-        //     end: '2022-09-08',
-        //     name: 'Son_4',
-        //     id: "Task 14",
-        //     Father: false,
-        //     Porcent: 100,
-        //     dependencies: ['Task 13']
-
-        // }, {
-        //     start: '2022-09-05',
-        //     end: '2022-09-10',
-        //     name: 'Father_3',
-        //     id: "Task 17",
-        //     Father: true,
-        //     Porcent: 100,
-
-        // }, {
-        //     start: '2022-09-05',
-        //     end: '2022-09-08',
-        //     name: 'Son_4',
-        //     id: "Task 16",
-        //     Father: false,
-        //     Porcent: 100,
-        //     dependencies: ['Task 17']
-
-        // }, {
-        //     start: '2022-09-05',
-        //     end: '2022-09-06',
-        //     name: 'Son_5',
-        //     id: "Task 15",
-        //     Father: false,
-        //     Porcent: 100,
-        //     dependencies: ['Task 16']
-
-        // }]
         var gantt_chart = new Gantt(".gantt-target", tasks, {
-            // header_height: 40, // SE DEFINE LAS ALTURAS DEL ENCABEZADO
-            // bar_height: 40, // SE DEFINE LA ALTURA  DE LAS BARRAS
-            // column_width: 10, // PROPORCION DE ANCHO DE LAS BARRAS
-            // bar_corner_radius: 12,
-
 
             on_click: function(task) {
                 console.log(task);
@@ -151,5 +62,7 @@
         console.log(gantt_chart);
     </script>
 </body>
+
+
 
 </html>
