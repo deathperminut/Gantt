@@ -256,13 +256,20 @@ export default class Gantt {
     setup_gantt_dates() {
         this.gantt_start = this.gantt_end = null;
 
-        for (let task of this.tasks) {
-            // set global start and end date
-            if (!this.gantt_start || task._start < this.gantt_start) {
-                this.gantt_start = task._start;
-            }
-            if (!this.gantt_end || task._end > this.gantt_end) {
-                this.gantt_end = task._end;
+        if (this.tasks.length == 0) {
+            this.gantt_start = new Date(); // FECHA ACTUAL
+            this.gantt_end = date_utils.add(this.gantt_start, 30, 'day'); // LE SUMAMOS 30 DIAS A LA FECHA ACTUAL
+
+        } else {
+
+            for (let task of this.tasks) {
+                // set global start and end date
+                if (!this.gantt_start || task._start < this.gantt_start) {
+                    this.gantt_start = task._start;
+                }
+                if (!this.gantt_end || task._end > this.gantt_end) {
+                    this.gantt_end = task._end;
+                }
             }
         }
 
@@ -795,17 +802,22 @@ export default class Gantt {
         if (TaskButton == null) {
 
 
-            const hours_before_first_task = date_utils.diff(
-                this.get_oldest_starting_date(),
-                this.gantt_start,
-                'hour'
-            );
+            if (this.tasks.length == 0) {
+                parent_element.scrollLeft = 0;
 
-            var scroll_pos = (hours_before_first_task / this.options.step) *
-                this.options.column_width -
-                this.options.column_width;
+            } else {
+                const hours_before_first_task = date_utils.diff(
+                    this.get_oldest_starting_date(),
+                    this.gantt_start,
+                    'hour'
+                );
 
-            parent_element.scrollLeft = scroll_pos;
+                var scroll_pos = (hours_before_first_task / this.options.step) *
+                    this.options.column_width -
+                    this.options.column_width;
+
+                parent_element.scrollLeft = scroll_pos;
+            }
 
         } else {
             var scroll_pos = TaskButton - 30;

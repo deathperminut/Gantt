@@ -876,7 +876,6 @@ var Gantt = (function() {
 
                                     if (!GanttGeneral.bars[i].task.dependencies.includes(this.task.id) && GanttGeneral.bars[i].task.name != '' &&
                                         !this.task.dependencies.includes(GanttGeneral.bars[i].task.id)) {
-                                        console.log('CULPABLE 1');
                                         GanttGeneral.bars[i].bar_group.childNodes[1].style.opacity = 1;
                                         GanttGeneral.bars[i].bar_group.childNodes[1].style.fill = '#C654D1';
                                         ArrayEncendidos.push(GanttGeneral.bars[i]);
@@ -896,7 +895,6 @@ var Gantt = (function() {
                             if (GanttGeneral.bars[i].task.id != this.task.id) {
                                 if (!GanttGeneral.bars[i].task.Father && GanttGeneral.bars[i].task.name != '' && !this.task.dependencies.includes(GanttGeneral.bars[i].task.id)) {
                                     if (!GanttGeneral.bars[i].task.dependencies.includes(this.task.id)) {
-                                        console.log('CULPABLE 2');
                                         GanttGeneral.bars[i].bar_group.childNodes[1].style.opacity = 1;
                                         GanttGeneral.bars[i].bar_group.childNodes[1].style.fill = '#C654D1';
                                         ArrayEncendidos.push(GanttGeneral.bars[i]);
@@ -2094,7 +2092,6 @@ var Gantt = (function() {
             var Line = this.from_task.bar_group.childNodes[2];
             CircleOutput.style.opacity = 1;
             Line.style.opacity = 1;
-            console.log('CULPABLE 3');
             CircleInput.style.opacity = 1;
 
         }
@@ -2191,7 +2188,6 @@ var Gantt = (function() {
             this.element.addEventListener('click', (event) => {
                 // GENERO UN CICLO PARA ENCONTRAR LA DEPENDENCIA DE LAS HIJAS..
                 console.log('click arrow');
-                console.log(GanttGeneral);
                 var bandera = false;
                 //ELIMINAMOS LA ASOCIACIÓN EN EL DEPENDECIES MAP
                 var Indice = GanttGeneral.dependency_map[this.from_task.task.id].findIndex(task => task === this.to_task.task.id);
@@ -2246,15 +2242,12 @@ var Gantt = (function() {
                         for (var j = 0; j < GanttGeneral.dependency_map[this.from_task.task.id].length; j++) {
 
                             if (ArrayFathers.includes(GanttGeneral.dependency_map[this.from_task.task.id][j])) {
-                                console.log()
-
                                 CF = true;
                                 break;
                             }
 
                         }
                         if (!CF) {
-                            console.log('ESTE ES EL HPT');
                             GanttGeneral.bars[i].bar_group.childNodes[2].style.opacity = 0;
                             GanttGeneral.bars[i].bar_group.childNodes[3].style.opacity = 0;
                             GanttGeneral.bars[i].bar_group.addEventListener('mouseleave', MouseLeave, false);
@@ -2396,11 +2389,13 @@ var Gantt = (function() {
 
     class Gantt {
         constructor(wrapper, tasks, options) {
+            console.log('ENTRA A CREAR EL GANTT');
             options = options;
             this.setup_wrapper(wrapper);
             this.setup_options(options);
             this.ResetTasks(tasks);
             this.setup_tasks(tasks);
+            console.log('salimos de la zona de tareas');
             // initialize with default view mode
             this.change_view_mode();
             this.bind_events();
@@ -2610,14 +2605,22 @@ var Gantt = (function() {
 
         setup_gantt_dates() {
             this.gantt_start = this.gantt_end = null;
+            // EN CASO DE QUE NO HAYAN TAREAS DEFINIMOS DESDE EL DIA ACTUAL MAS 30 DIAS MINIMO.
+            // CAMBIO IMPORTANTE 1
+            if (this.tasks.length == 0) {
+                this.gantt_start = new Date(); // FECHA ACTUAL
+                this.gantt_end = date_utils.add(this.gantt_start, 30, 'day'); // LE SUMAMOS 30 DIAS A LA FECHA ACTUAL
 
-            for (let task of this.tasks) {
-                // set global start and end date
-                if (!this.gantt_start || task._start < this.gantt_start) {
-                    this.gantt_start = task._start;
-                }
-                if (!this.gantt_end || task._end > this.gantt_end) {
-                    this.gantt_end = task._end;
+            } else {
+
+                for (let task of this.tasks) {
+                    // set global start and end date
+                    if (!this.gantt_start || task._start < this.gantt_start) {
+                        this.gantt_start = task._start;
+                    }
+                    if (!this.gantt_end || task._end > this.gantt_end) {
+                        this.gantt_end = task._end;
+                    }
                 }
             }
 
@@ -3148,19 +3151,25 @@ var Gantt = (function() {
             const parent_element = this.$svg.parentElement;
             if (!parent_element) return;
             if (TaskButton == null) {
+                if (this.tasks.length == 0) {
+                    parent_element.scrollLeft = 0;
+
+                } else {
+                    const hours_before_first_task = date_utils.diff(
+                        this.get_oldest_starting_date(),
+                        this.gantt_start,
+                        'hour'
+                    );
+
+                    var scroll_pos = (hours_before_first_task / this.options.step) *
+                        this.options.column_width -
+                        this.options.column_width;
+
+                    parent_element.scrollLeft = scroll_pos;
+                }
 
 
-                const hours_before_first_task = date_utils.diff(
-                    this.get_oldest_starting_date(),
-                    this.gantt_start,
-                    'hour'
-                );
 
-                var scroll_pos = (hours_before_first_task / this.options.step) *
-                    this.options.column_width -
-                    this.options.column_width;
-
-                parent_element.scrollLeft = scroll_pos;
 
             } else {
                 var scroll_pos = TaskButton - 30;
