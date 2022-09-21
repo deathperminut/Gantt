@@ -374,6 +374,8 @@ export default class Bar {
 
         }
         if (this.task.name != '') {
+            var ControlSons = false;
+            var ControlFathers = false;
 
             //////// LISTENER PARA EL CLICK DEL NODO DE SALIDA... \\\\\\\\\\\
             this.bar_group.getElementsByClassName('CircleOutput')[0].addEventListener('click', (event) => {
@@ -397,7 +399,6 @@ export default class Bar {
 
                                 if (!GanttGeneral.bars[i].task.dependencies.includes(this.task.id) && GanttGeneral.bars[i].task.name != '' &&
                                     !this.task.dependencies.includes(GanttGeneral.bars[i].task.id)) {
-                                    console.log('CULPABLE 1');
                                     GanttGeneral.bars[i].bar_group.childNodes[1].style.opacity = 1;
                                     GanttGeneral.bars[i].bar_group.childNodes[1].style.fill = '#C654D1';
                                     ArrayEncendidos.push(GanttGeneral.bars[i]);
@@ -414,10 +415,10 @@ export default class Bar {
                 } else {
                     for (var i = 0; i < length_bars; i++) {
                         // SOLO MOSTRAMOS LOS HIJOS EN CASO DE SER TARJETA HIJOS...
+
                         if (GanttGeneral.bars[i].task.id != this.task.id) {
                             if (!GanttGeneral.bars[i].task.Father && GanttGeneral.bars[i].task.name != '' && !this.task.dependencies.includes(GanttGeneral.bars[i].task.id)) {
                                 if (!GanttGeneral.bars[i].task.dependencies.includes(this.task.id)) {
-                                    console.log('CULPABLE 2');
                                     GanttGeneral.bars[i].bar_group.childNodes[1].style.opacity = 1;
                                     GanttGeneral.bars[i].bar_group.childNodes[1].style.fill = '#C654D1';
                                     ArrayEncendidos.push(GanttGeneral.bars[i]);
@@ -432,6 +433,10 @@ export default class Bar {
 
                     }
 
+                    if (GanttGeneral.dependency_map[this.task.id] != undefined || null) {
+                        ControlSons = true;
+                    }
+
                 }
                 /****************************ELIMINAMOS LA OPCIÓN DE LOS QUE YA ESTAN CONECTADOS A EL. ************************************/
 
@@ -442,14 +447,12 @@ export default class Bar {
                         for (var b = 0; b < length_bars; b++) {
                             // BUSCAMOS LOS PADRES ASOCIADOS Y NO LOS MOSTRAMOS...
                             if (GanttGeneral.bars[b].task.id === ListaDependenciasPadres[i]) {
+                                ControlFathers = true;
                                 if (GanttGeneral.bars[b].bar_group.childNodes[1].style.opacity != 1) {
                                     GanttGeneral.bars[b].bar_group.childNodes[1].style.opacity = 0;
                                 }
                                 //GanttGeneral.bars[b].bar_group.childNodes[0].style.opacity = 0;
                                 GanttGeneral.bars[b].bar_group.childNodes[1].style.fill = 'black';
-
-
-
                             }
 
 
@@ -459,20 +462,7 @@ export default class Bar {
 
                     }
                 }
-                if (ArrayEncendidos.length == 0) {
-                    GenerateArrow = false;
-
-                    if (this.bar_group.getElementsByClassName('CircleOutput')[0].style.fill == "black") {
-                        this.bar_group.getElementsByClassName('CircleOutput')[0].style.fill = "black";
-                        this.bar_group.getElementsByClassName('CircleOutput')[0].style.opacity = 0;
-                        this.bar_group.getElementsByClassName('Line')[0].style.opacity = 0;
-                        event.path[1].addEventListener('mouseleave', MouseLeave, false);
-                    }
-
-
-
-                } else {
-                    /**************************************************************************** */
+                if (ArrayEncendidos.length != 0) {
                     GenerateArrow = true; // PASAMOS LA VARIABLE PARA INDICAR QUE ESTAMOS EN ESTADO PARA CREAR UNA CONEXIÓN.
                     console.log('CONEXIÓN HABILITADA ESPERANDO NODO RECEPTOR...');
                     CircleOutputArrow = this; // ALMACENAMOS EL ELEMENTO ASOCIADO DE LA TAREA INICIAL.
@@ -490,6 +480,36 @@ export default class Bar {
                         this.bar_group.getElementsByClassName('CircleInput')[0].style.opacity = 0;
 
                     }
+
+
+
+
+
+
+
+
+                } else {
+                    console.log("ENTRA");
+                    GenerateArrow = false;
+
+                    if (this.bar_group.getElementsByClassName('CircleOutput')[0].style.fill != "#C654D1") {
+                        this.bar_group.getElementsByClassName('CircleOutput')[0].style.fill = "black";
+
+                        if (ControlFathers) {
+                            this.bar_group.getElementsByClassName('CircleOutput')[0].style.opacity = 0;
+                            this.bar_group.getElementsByClassName('Line')[0].style.opacity = 0;
+                            event.path[1].addEventListener('mouseleave', MouseLeave, false);
+
+                        }
+                    }
+                    if (ControlSons) {
+                        console.log("ENTRO 2");
+                        this.bar_group.getElementsByClassName('CircleOutput')[0].style.opacity = 1;
+                        this.bar_group.getElementsByClassName('Line')[0].style.opacity = 1;
+                        event.path[1].removeEventListener('mouseleave', MouseLeave, false);
+                    }
+
+
                 }
 
 
@@ -713,7 +733,7 @@ export default class Bar {
             this.ClassDate = '.bar-label.date';
             ClassBig = 'bar-label BigCase';
             this.ClassBig = '.bar-label.BigCase';
-            UrlImag = 'http://drive.google.com/uc?export=view&id=1DvOZ_vrL7G0gyt0EoPE4O2t8BHUPfeXo'
+            UrlImag = ''
 
         } else {
             ClassName = 'bar-label nameSon';
@@ -722,10 +742,16 @@ export default class Bar {
             this.ClassDate = '.bar-label.dateSon';
             ClassBig = 'bar-label BigCaseSon';
             this.ClassBig = '.bar-label.BigCaseSon';
-            UrlImag = 'http://drive.google.com/uc?export=view&id=1XMYcwwVcNDek3IvoahZYTO2VWyyKf7ng';
+            UrlImag = '';
 
         }
         if (this.task.name == '') {
+            var classInput;
+            if (this.task.Father) {
+                classInput = "inputName Father"
+            } else {
+                classInput = "inputName"
+            }
             createSVG('foreignObject', {
                 class: 'InputLabel',
                 x: position_x,
@@ -738,7 +764,7 @@ export default class Bar {
                     type: 'text',
                     height: '4px',
                     placeholder: 'Ingresa el nombre de la tarea',
-                    class: 'inputName',
+                    class: classInput,
                     append_to: this.bar_group.getElementsByClassName('InputLabel')[0],
                 })
                 // GENERAMOS LISTENER PARA EL INPUT
@@ -759,6 +785,7 @@ export default class Bar {
 
                     }
                     //ACTUALIZAMOS EL TASK....
+                    PositionScroll = GanttGeneral.GetScrollPosition();
                     GanttGeneral.setup_tasks(GanttGeneral.tasks);
 
                     // // initialize with default view mode
@@ -858,7 +885,7 @@ export default class Bar {
         if (this.task.Father && this.task.name != '') {
 
             createSVG('image', {
-                href: 'http://drive.google.com/uc?export=view&id=1ATA6_oLMVQz7isYoWMXDQDbNuFz1xt3v',
+                href: '',
                 class: 'bar-label InfoImage',
                 x: this.x + this.const_name_x + 50, // YA QUE NO PODEMOS OBTENERLA DESDE AQUI LA CUADRAMOS ABAJO EN EL RESETEO
                 y: this.y + this.height / 4 - (11 / 6),
@@ -940,7 +967,7 @@ export default class Bar {
 
 
             createSVG('image', {
-                href: 'http://drive.google.com/uc?export=view&id=1PUhyEQ54PpJZs9-YCNmAUlHqZzjGdb0q',
+                href: 'src/assets/Imag/Grupo354.png',
                 class: 'bar-label TaskButton',
                 x: this.x + this.width - 70,
                 y: this.y + (this.height / 2) - (70 / 2.25),
@@ -957,12 +984,22 @@ export default class Bar {
 
                 var task = {
                     start: this.task.start, // GENERAMOS CON LA FECHA ACTUAL
-                    end: date_utils.add(date_utils.parse(this.task.start), 5, 'day'),
+                    end: date_utils.add(date_utils.parse(this.task.start), 6, 'day'),
                     name: '',
+                    content: '',
+                    finished: false,
+                    Process: 'Pendiente',
+                    Sprint: '',
+                    prioridad: '',
+                    Tablet: '-1',
                     id: indice + '',
                     Father: false,
                     Porcent: 100,
-                    dependencies: [this.task.id]
+                    dependencies: [this.task.id],
+                    Entregables: new Array(),
+                    SprintArray: new Array(),
+                    ResponsableArray: new Array(),
+                    SubTareas: new Array()
                 }
                 indice = indice + 1;
 
@@ -983,9 +1020,9 @@ export default class Bar {
                     }
                 }
                 // CREACIÓN TAREAS..
+                PositionScroll = GanttGeneral.GetScrollPosition()
                 this.gantt.setup_tasks(this.gantt.tasks);
                 GenerateArrow = false;
-
                 this.gantt.change_view_mode();
                 GanttGeneral.set_scroll_position(PositionScroll);
                 this.gantt.bind_events();
@@ -1037,7 +1074,7 @@ export default class Bar {
         });
 
         createSVG('image', {
-            href: 'http://drive.google.com/uc?export=view&id=1PIF3JbI0hC_VvY5jVuq3JJRKMbceziaL',
+            href: 'src/assets/Imag/Grupo359.png',
             class: 'delete',
             x: this.x - 14, // YA QUE NO PODEMOS OBTENERLA DESDE AQUI LA CUADRAMOS ABAJO EN EL RESETEO
             y: this.y + this.height / 10,

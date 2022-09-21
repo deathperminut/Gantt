@@ -82,22 +82,22 @@
 }
 
 .gantt .CircleInput.father {
-    fill: #000;
+    fill: black;
     opacity: 0;
 }
 
 .gantt .CircleInput.son {
-    fill: #000;
+    fill: black;
     opacity: 0;
 }
 
 .gantt .CircleOutput.father {
-    fill: #000;
+    fill: black;
     opacity: 0;
 }
 
 .gantt .CircleOutput.son {
-    fill: #000;
+    fill: black;
     opacity: 0;
 }
 
@@ -106,7 +106,11 @@
     height: 20px;
     background-color: transparent;
     border: 0;
-    color: rgb(187, 184, 184)
+    color: rgb(28, 27, 27) !important;
+}
+
+.inputName.Father {
+    color: rgb(187, 184, 184)!important;
 }
 
 .delete {
@@ -136,7 +140,11 @@
 }
 
 .inputName::placeholder {
-    color: rgb(187, 184, 184)
+    color: rgb(28, 27, 27) !important;
+}
+
+.inputName.Father::placeholder {
+    color: rgb(187, 184, 184) !important;
 }
 
 .gantt .Line.father {
@@ -254,7 +262,7 @@
 }
 
 .gantt .bar-label.BigCaseSon {
-    visibility: hidden;
+    visibility: hidden!important;
     fill: black !important;
     font-size: 20px !important;
     text-anchor: start !important;
@@ -343,18 +351,6 @@
 
 .gantt .bar-label.dateImage.big {
     visibility: hidden;
-}
-
-.gantt .bar-label.BigCase.big {
-    /*EN CASO DE TENER ESPACIO*/
-    visibility: visible;
-    fill: #e9e6e6;
-}
-
-.gantt .bar-label.BigCaseSon.big {
-    /*EN CASO DE TENER ESPACIO*/
-    visibility: visible;
-    fill: black;
 }
 
 

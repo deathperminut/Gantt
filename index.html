@@ -25,7 +25,28 @@
         <div class="gantt-target"></div>
     </div>
     <script>
-        var tasks = [];
+        var tasks = [{
+            start: '',
+            end: '',
+            name: '',
+            id: "Task 10",
+            Father: true,
+            Porcent: 100,
+        }, {
+            start: '2022-08-25',
+            end: '2022-09-01',
+            name: 'Father_3',
+            id: "Task 11",
+            Father: true,
+            Porcent: 100,
+        }, {
+            start: '2022-08-25',
+            end: '2022-09-01',
+            name: 'Father_3',
+            id: "Task 12",
+            Father: true,
+            Porcent: 100,
+        }];
 
         var gantt_chart = new Gantt(".gantt-target", tasks, {
 

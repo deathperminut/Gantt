@@ -306,7 +306,6 @@ export default {
     },
 };
 
-// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/padStart
 function padStart(str, targetLength, padString) {
     str = str + '';
     targetLength = targetLength >> 0;

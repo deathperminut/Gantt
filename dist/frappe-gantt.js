@@ -853,9 +853,14 @@ var Gantt = (function() {
 
             }
             if (this.task.name != '') {
+                var ControlSons = false;
+                var ControlFathers = false;
 
                 //////// LISTENER PARA EL CLICK DEL NODO DE SALIDA... \\\\\\\\\\\
                 this.bar_group.getElementsByClassName('CircleOutput')[0].addEventListener('click', (event) => {
+
+                    // CLICK PARA GENERAR UNA FLECHA.
+
                     event.path[1].removeEventListener('mouseleave', MouseLeave, false); // DEJAMOS FIJO LA FLECHA
                     ElementListener = event.path[1];
                     if (GenerateArrow) {
@@ -893,6 +898,8 @@ var Gantt = (function() {
                         for (var i = 0; i < length_bars; i++) {
                             // SOLO MOSTRAMOS LOS HIJOS EN CASO DE SER TARJETA HIJOS...
                             if (GanttGeneral.bars[i].task.id != this.task.id) {
+
+
                                 if (!GanttGeneral.bars[i].task.Father && GanttGeneral.bars[i].task.name != '' && !this.task.dependencies.includes(GanttGeneral.bars[i].task.id)) {
                                     if (!GanttGeneral.bars[i].task.dependencies.includes(this.task.id)) {
                                         GanttGeneral.bars[i].bar_group.childNodes[1].style.opacity = 1;
@@ -908,6 +915,10 @@ var Gantt = (function() {
                             }
 
                         }
+                        console.log(GanttGeneral.dependency_map[this.task.id])
+                        if (GanttGeneral.dependency_map[this.task.id] != undefined || null) {
+                            ControlSons = true;
+                        }
 
                     }
                     /****************************ELIMINAMOS LA OPCIÓN DE LOS QUE YA ESTAN CONECTADOS A EL. ************************************/
@@ -919,6 +930,7 @@ var Gantt = (function() {
                             for (var b = 0; b < length_bars; b++) {
                                 // BUSCAMOS LOS PADRES ASOCIADOS Y NO LOS MOSTRAMOS...
                                 if (GanttGeneral.bars[b].task.id === ListaDependenciasPadres[i]) {
+                                    ControlFathers = true;
                                     if (GanttGeneral.bars[b].bar_group.childNodes[1].style.opacity != 1) {
                                         GanttGeneral.bars[b].bar_group.childNodes[1].style.opacity = 0;
                                     }
@@ -936,19 +948,7 @@ var Gantt = (function() {
 
                         }
                     }
-                    if (ArrayEncendidos.length == 0) {
-                        GenerateArrow = false;
-
-                        if (this.bar_group.getElementsByClassName('CircleOutput')[0].style.fill == "black") {
-                            this.bar_group.getElementsByClassName('CircleOutput')[0].style.fill = "black";
-                            this.bar_group.getElementsByClassName('CircleOutput')[0].style.opacity = 0;
-                            this.bar_group.getElementsByClassName('Line')[0].style.opacity = 0;
-                            event.path[1].addEventListener('mouseleave', MouseLeave, false);
-                        }
-
-
-
-                    } else {
+                    if (ArrayEncendidos.length != 0) {
                         /**************************************************************************** */
                         GenerateArrow = true; // PASAMOS LA VARIABLE PARA INDICAR QUE ESTAMOS EN ESTADO PARA CREAR UNA CONEXIÓN.
                         console.log('CONEXIÓN HABILITADA ESPERANDO NODO RECEPTOR...');
@@ -965,8 +965,33 @@ var Gantt = (function() {
                         }
                         if (!DetectorConector) {
                             this.bar_group.getElementsByClassName('CircleInput')[0].style.opacity = 0;
+                        }
+
+
+
+                    } else {
+
+                        GenerateArrow = false;
+                        console.log("ENTRO AQUI");
+
+                        if (this.bar_group.getElementsByClassName('CircleOutput')[0].style.fill != "#C654D1") {
+                            this.bar_group.getElementsByClassName('CircleOutput')[0].style.fill = "black";
+
+                            if (ControlFathers) {
+                                this.bar_group.getElementsByClassName('CircleOutput')[0].style.opacity = 0;
+                                this.bar_group.getElementsByClassName('Line')[0].style.opacity = 0;
+                                event.path[1].addEventListener('mouseleave', MouseLeave, false);
+
+                            }
 
                         }
+                        if (ControlSons) {
+                            this.bar_group.getElementsByClassName('CircleOutput')[0].style.opacity = 1;
+                            this.bar_group.getElementsByClassName('Line')[0].style.opacity = 1;
+                            event.path[1].removeEventListener('mouseleave', MouseLeave, false);
+
+                        }
+
                     }
 
 
@@ -1058,6 +1083,7 @@ var Gantt = (function() {
 
             this.bar_group.getElementsByClassName('CircleInput')[0].addEventListener('click', (event) => {
 
+                console.log("ENTRADA1")
                 if (!ArrayIdConectorStart.includes(this.task.id)) {
                     return;
                 }
@@ -1203,6 +1229,12 @@ var Gantt = (function() {
 
             }
             if (this.task.name == '') {
+                var classInput;
+                if (this.task.Father) {
+                    classInput = "inputName Father"
+                } else {
+                    classInput = "inputName"
+                }
                 createSVG('foreignObject', {
                     class: 'InputLabel',
                     x: position_x,
@@ -1215,7 +1247,7 @@ var Gantt = (function() {
                         type: 'text',
                         height: '4px',
                         placeholder: 'Ingresa el nombre de la tarea',
-                        class: 'inputName',
+                        class: classInput,
                         append_to: this.bar_group.getElementsByClassName('InputLabel')[0],
                     })
                     // GENERAMOS LISTENER PARA EL INPUT
@@ -1236,6 +1268,7 @@ var Gantt = (function() {
 
                         }
                         //ACTUALIZAMOS EL TASK....
+                        PositionScroll = GanttGeneral.GetScrollPosition();
                         GanttGeneral.setup_tasks(GanttGeneral.tasks);
 
                         // // initialize with default view mode
@@ -1460,6 +1493,7 @@ var Gantt = (function() {
                         }
                     }
                     // CREACIÓN TAREAS..
+                    PositionScroll = GanttGeneral.GetScrollPosition()
                     this.gantt.setup_tasks(this.gantt.tasks);
                     GenerateArrow = false;
 
@@ -1467,11 +1501,6 @@ var Gantt = (function() {
                     GanttGeneral.set_scroll_position(PositionScroll);
                     this.gantt.bind_events();
                     GanttGeneral.set_scroll_position(PositionScroll);
-
-
-
-
-
 
                 }, false);
 
@@ -1690,7 +1719,7 @@ var Gantt = (function() {
                 this.gantt.trigger_event('date_change', [
                     this.task,
                     new_start_date,
-                    date_utils.add(new_end_date, 0, 'second'), // UN CAMBIO
+                    date_utils.add(new_end_date, 0, 'second'),
                 ]);
             }
 
@@ -2285,9 +2314,14 @@ var Gantt = (function() {
                 }
                 //////////////////////////////////////////////////////////
 
+                //ACTUALIZAMOS EL TASK....
+                var PositionScroll = GanttGeneral.GetScrollPosition();
                 GanttGeneral.setup_tasks(GanttGeneral.tasks);
 
-
+                // // initialize with default view mode
+                GanttGeneral.change_view_mode();
+                GanttGeneral.bind_events();
+                GanttGeneral.set_scroll_position(PositionScroll);
 
             });
 
@@ -2469,7 +2503,7 @@ var Gantt = (function() {
 
         setup_options(options) {
             const default_options = {
-                header_height: 40,
+                header_height: 60,
                 column_width: 10,
                 step: 24,
                 view_modes: [...Object.values(VIEW_MODE)],
@@ -2888,18 +2922,18 @@ var Gantt = (function() {
                 const height =
                     (this.options.bar_height + this.options.padding) *
                     length +
-                    this.options.header_height +
+                    (this.options.header_height) +
                     this.options.padding / 2;
 
                 if (this.options.view_mode === 'Day') {
                     createSVG('rect', {
                         x: x,
-                        y: y,
+                        y: y + this.header_height * 0.3,
                         width: width,
                         rx: this.options.bar_corner_radius,
                         ry: this.options.bar_corner_radius,
 
-                        height: this.header_height,
+                        height: this.header_height - this.header_height * 0.3,
                         class: 'today-header',
                         append_to: this.layers.grid,
                     });
@@ -2917,7 +2951,7 @@ var Gantt = (function() {
                 }
                 createSVG('rect', {
                     x: x + width / 4,
-                    y: y,
+                    y: y + this.header_height * 0.3,
                     width: width / 2,
                     height: height,
                     class: 'today-highlight',
@@ -2952,7 +2986,7 @@ var Gantt = (function() {
                 if (date.upper_text) {
                     const $upper_text = createSVG('text', {
                         x: date.upper_x,
-                        y: date.upper_y,
+                        y: date.upper_y - date.upper_y * 0.5,
                         innerHTML: date.upper_text,
                         class: 'upper-text',
                         append_to: this.layers.date,
@@ -3171,12 +3205,31 @@ var Gantt = (function() {
 
 
 
+            } else if (TaskButton == "NewTask") {
+                var today = new Date();
+                const hours_before_first_task = date_utils.diff(
+                    today,
+                    this.gantt_start,
+                    'hour'
+                );
+                0
+                var scroll_pos = (hours_before_first_task / this.options.step) *
+                    this.options.column_width -
+                    this.options.column_width;
+                parent_element.scrollLeft = scroll_pos;
+
+
             } else {
-                var scroll_pos = TaskButton - 30;
+                var scroll_pos = TaskButton;
                 parent_element.scrollLeft = scroll_pos;
             }
 
         }
+        GetScrollPosition() {
+            const parent_element = this.$svg.parentElement.scrollLeft;
+            return parent_element;
+        }
+
 
         bind_grid_click() {
             $.on(

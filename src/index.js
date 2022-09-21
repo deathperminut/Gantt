@@ -119,7 +119,7 @@ export default class Gantt {
 
     setup_options(options) {
         const default_options = {
-            header_height: 40,
+            header_height: 60,
             column_width: 10,
             step: 24,
             view_modes: [...Object.values(VIEW_MODE)],
@@ -543,12 +543,12 @@ export default class Gantt {
             if (this.options.view_mode === 'Day') {
                 createSVG('rect', {
                     x: x,
-                    y: y,
+                    y: y + this.header_height * 0.3,
                     width: width,
                     rx: this.options.bar_corner_radius,
                     ry: this.options.bar_corner_radius,
 
-                    height: this.header_height,
+                    height: this.header_height - this.header_height * 0.3,
                     class: 'today-header',
                     append_to: this.layers.grid,
                 });
@@ -566,7 +566,7 @@ export default class Gantt {
             }
             createSVG('rect', {
                 x: x + width / 4,
-                y: y,
+                y: y + this.header_height * 0.3,
                 width: width / 2,
                 height: height,
                 class: 'today-highlight',
@@ -601,7 +601,7 @@ export default class Gantt {
             if (date.upper_text) {
                 const $upper_text = createSVG('text', {
                     x: date.upper_x,
-                    y: date.upper_y,
+                    y: date.upper_y - date.upper_y * 0.5,
                     innerHTML: date.upper_text,
                     class: 'upper-text',
                     append_to: this.layers.date,
@@ -819,11 +819,29 @@ export default class Gantt {
                 parent_element.scrollLeft = scroll_pos;
             }
 
+        } else if (TaskButton == "NewTask") {
+            var today = new Date();
+            const hours_before_first_task = date_utils.diff(
+                today,
+                this.gantt_start,
+                'hour'
+            );
+
+            var scroll_pos = (hours_before_first_task / this.options.step) *
+                this.options.column_width -
+                this.options.column_width;
+            parent_element.scrollLeft = scroll_pos;
+
+
         } else {
-            var scroll_pos = TaskButton - 30;
+            var scroll_pos = TaskButton;
             parent_element.scrollLeft = scroll_pos;
         }
 
+    }
+    GetScrollPosition() {
+        const parent_element = this.$svg.parentElement.scrollLeft;
+        return parent_element;
     }
 
     bind_grid_click() {

@@ -240,7 +240,13 @@ export default class Arrow {
             }
             //////////////////////////////////////////////////////////
 
+            var PositionScroll = GanttGeneral.GetScrollPosition();
             GanttGeneral.setup_tasks(GanttGeneral.tasks);
+
+            // // initialize with default view mode
+            GanttGeneral.change_view_mode();
+            GanttGeneral.bind_events();
+            GanttGeneral.set_scroll_position(PositionScroll);
 
 
 
