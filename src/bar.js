@@ -379,6 +379,10 @@ export default class Bar {
 
             //////// LISTENER PARA EL CLICK DEL NODO DE SALIDA... \\\\\\\\\\\
             this.bar_group.getElementsByClassName('CircleOutput')[0].addEventListener('click', (event) => {
+                ListFather=GanttGeneral.tasks.filter((obj)=>obj.Father===true);
+                if(ListFather.length===1){
+                    return; // no hacemos nada
+                }
                 event.path[1].removeEventListener('mouseleave', MouseLeave, false); // DEJAMOS FIJO LA FLECHA
                 ElementListener = event.path[1];
                 if (GenerateArrow) {
@@ -913,11 +917,11 @@ export default class Bar {
             });
             /* CREAMOS EL TEXTO DEL PORCENTAJE */
             this.PorcentValueConstant = 47;
-            if (this.task.Porcent == 100) {
+            if (this.task.porcentaje == 100) {
                 this.PorcentValueConstant = 45;
             }
             createSVG('text', {
-                innerHTML: this.task.Porcent,
+                innerHTML: this.task.porcentaje,
                 class: 'bar-label PorcentValue',
                 x: this.x + (this.width / 2) + this.PorcentValueConstant, // DEFINIMOS QUE SIEMPRE ESTE EN LA MITAD
                 y: this.y + this.height / 1.4, // MISMA ALTURA DEL TEXTO
@@ -987,29 +991,27 @@ export default class Bar {
                     end: date_utils.add(date_utils.parse(this.task.start), 6, 'day'),
                     name: '',
                     content: '',
+                    tablero_id:'',  
                     finished: false,
-                    Process: 'Pendiente',
-                    Sprint: '',
-                    prioridad: '',
-                    Tablet: '-1',
-                    id: indice + '',
+                    process: 'Pendiente',
+                    actividad_padre_id:this.task.id,
+                    sprint: '',
+                    prioridad: 'Baja',
+                    id: 'Task '+indice, // GENERAMOS UN ID INTERNO
                     Father: false,
-                    Porcent: 100,
+                    porcentaje: 100,
                     dependencies: [this.task.id],
-                    Entregables: new Array(),
+                    link_deliverables: new Array(),
                     SprintArray: new Array(),
-                    ResponsableArray: new Array(),
-                    SubTareas: new Array()
+                    responsables: new Array(),
+                    subtask: new Array()
                 }
                 indice = indice + 1;
 
                 //LA AGREGO JUSTO CUANDO EMPIEZA LA TAREA PADRE QUE REQUIERE
                 for (var i = 0; i < GanttGeneral.tasks.length; i++) {
                     if (GanttGeneral.bars[i].task.id == this.task.id) {
-
                         var PositionScroll = GanttGeneral.bars[i].$bar.getX();
-
-
                         if (i == GanttGeneral.tasks.length - 1) {
                             GanttGeneral.tasks.push(task); // SI ES LA ULTIMA TAREA LA AGREGAMOS AL FINAL
                             break;

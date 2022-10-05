@@ -860,6 +860,10 @@ var Gantt = (function() {
                 this.bar_group.getElementsByClassName('CircleOutput')[0].addEventListener('click', (event) => {
 
                     // CLICK PARA GENERAR UNA FLECHA.
+                    let ListFather=GanttGeneral.tasks.filter((obj)=>obj.Father===true);
+                    if(ListFather.length===1){
+                        return; // no hacemos nada
+                    }
 
                     event.path[1].removeEventListener('mouseleave', MouseLeave, false); // DEJAMOS FIJO LA FLECHA
                     ElementListener = event.path[1];
@@ -915,7 +919,6 @@ var Gantt = (function() {
                             }
 
                         }
-                        console.log(GanttGeneral.dependency_map[this.task.id])
                         if (GanttGeneral.dependency_map[this.task.id] != undefined || null) {
                             ControlSons = true;
                         }
@@ -1591,13 +1594,13 @@ var Gantt = (function() {
                 this.group.classList.add('active');
             });
 
-            $.on(this.group, 'dblclick', (e) => {
+            $.on(this.bar_group, 'dblclick', (e) => {
                 if (this.action_completed) {
                     // just finished a move action, wait for a few seconds
                     return;
                 }
-
-                this.gantt.trigger_event('click', [this.task]);
+                console.log("entro")
+                this.gantt.trigger_event('dblclick', [this.task]);
             });
         }
 
@@ -2423,13 +2426,11 @@ var Gantt = (function() {
 
     class Gantt {
         constructor(wrapper, tasks, options) {
-            console.log('ENTRA A CREAR EL GANTT');
             options = options;
             this.setup_wrapper(wrapper);
             this.setup_options(options);
             this.ResetTasks(tasks);
             this.setup_tasks(tasks);
-            console.log('salimos de la zona de tareas');
             // initialize with default view mode
             this.change_view_mode();
             this.bind_events();

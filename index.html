@@ -32,26 +32,12 @@
             id: "Task 10",
             Father: true,
             Porcent: 100,
-        }, {
-            start: '2022-08-25',
-            end: '2022-09-01',
-            name: 'Father_3',
-            id: "Task 11",
-            Father: true,
-            Porcent: 100,
-        }, {
-            start: '2022-08-25',
-            end: '2022-09-01',
-            name: 'Father_3',
-            id: "Task 12",
-            Father: true,
-            Porcent: 100,
         }];
 
         var gantt_chart = new Gantt(".gantt-target", tasks, {
 
             on_click: function(task) {
-                console.log(task);
+                console.log("TAREA");
             },
             on_date_change: function(task, start, end) {
                 console.log(task, start, end);
